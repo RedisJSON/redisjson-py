@@ -44,3 +44,7 @@ print '{} popped!'.format(rj.JSONArrPop('obj', Path('.arr')))
 rj.JSONSet('obj', Path('.answer'), 2.17)
 
 ```
+
+## License 
+
+[BSD 2-Clause](LICENSE)
