@@ -1,0 +1,10 @@
+*
+!/**/
+!.gitignore
+!requirements.txt
+!**/*.py
+!**/*.md
+
+.env
+
+*.pyc
