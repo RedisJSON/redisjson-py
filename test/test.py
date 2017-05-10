@@ -72,6 +72,83 @@ class ReJSONTestCase(TestCase):
         rj.JSONStrAppend('str', 'bar', Path.rootPath())
         self.assertEqual(6, rj.JSONStrLen('str', Path.rootPath()))
 
+    def testArrAppendShouldSucceed(self):
+        "Test JSONSArrAppend"
+        rj = Client()
+        rj.flushdb()
+
+        rj.JSONSet('arr', Path.rootPath(), [1])
+        self.assertEqual(2, rj.JSONArrAppend('arr', Path.rootPath(), 2))
+
+    def testArrIndexShouldSucceed(self):
+        "Test JSONSArrIndex"
+        rj = Client()
+        rj.flushdb()
+
+        rj.JSONSet('arr', Path.rootPath(), [0, 1, 2, 3, 4])
+        self.assertEqual(1, rj.JSONArrIndex('arr', Path.rootPath(), 1))
+        self.assertEqual(-1, rj.JSONArrIndex('arr', Path.rootPath(), 1, 2))
+
+    def testArrInsertShouldSucceed(self):
+        "Test JSONSArrInsert"
+        rj = Client()
+        rj.flushdb()
+
+        rj.JSONSet('arr', Path.rootPath(), [0, 4])
+        self.assertEqual(5, rj.JSONArrInsert('arr', Path.rootPath(), 1, *[1, 2, 3,]))
+        self.assertListEqual([0, 1, 2, 3, 4], rj.JSONGet('arr'))
+
+    def testArrLenShouldSucceed(self):
+        "Test JSONSArrLen"
+        rj = Client()
+        rj.flushdb()
+
+        rj.JSONSet('arr', Path.rootPath(), [0, 1, 2, 3, 4])
+        self.assertEqual(5, rj.JSONArrLen('arr', Path.rootPath()))
+
+    def testArrPopShouldSucceed(self):
+        "Test JSONSArrPop"
+        rj = Client()
+        rj.flushdb()
+
+        rj.JSONSet('arr', Path.rootPath(), [0, 1, 2, 3, 4])
+        self.assertEqual(4, rj.JSONArrPop('arr', Path.rootPath(), 4))
+        self.assertEqual(3, rj.JSONArrPop('arr', Path.rootPath(), -1))
+        self.assertEqual(2, rj.JSONArrPop('arr', Path.rootPath()))
+        self.assertEqual(0, rj.JSONArrPop('arr', Path.rootPath(), 0))
+        self.assertListEqual([1], rj.JSONGet('arr'))
+
+    def testArrTrimShouldSucceed(self):
+        "Test JSONSArrPop"
+        rj = Client()
+        rj.flushdb()
+
+        rj.JSONSet('arr', Path.rootPath(), [0, 1, 2, 3, 4])
+        self.assertEqual(3, rj.JSONArrTrim('arr', Path.rootPath(), 1, 3))
+        self.assertListEqual([1, 2, 3], rj.JSONGet('arr'))
+
+    def testObjKeysShouldSucceed(self):
+        "Test JSONSObjKeys"
+        rj = Client()
+        rj.flushdb()
+
+        obj = { 'foo': 'bar', 'baz': 'qaz' }
+        rj.JSONSet('obj', Path.rootPath(), obj)
+        keys = rj.JSONObjKeys('obj', Path.rootPath())
+        keys.sort()
+        exp = [k for k in obj.iterkeys()]
+        exp.sort()
+        self.assertListEqual(exp, keys)
+
+    def testObjLenShouldSucceed(self):
+        "Test JSONSObjLen"
+        rj = Client()
+        rj.flushdb()
+
+        obj = { 'foo': 'bar', 'baz': 'qaz' }
+        rj.JSONSet('obj', Path.rootPath(), obj)
+        self.assertEqual(len(obj), rj.JSONObjLen('obj', Path.rootPath()))
+        
     def testUsageExampleShouldSucceed(self):
         "Test the usage example"
 

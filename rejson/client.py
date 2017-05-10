@@ -20,6 +20,12 @@ def float_or_long(n):
     else:
         return long(n)
 
+def long_or_none(r):
+    "Return a long or None from a Redis reply"
+    if r:
+        return long(r)
+    return r
+
 def json_or_none(r):
     "Return a deserialized JSON object or None"
     if r:
@@ -53,8 +59,15 @@ class Client(StrictRedis):
             'JSON.SET': lambda r: r and nativestr(r) == 'OK',
             'JSON.NUMINCRBY': float_or_long,
             'JSON.NUMMULTBY': float_or_long,
-            'JSON.STRAPPEND': long,
-            'JSON.STRLEN': long,
+            'JSON.STRAPPEND': long_or_none,
+            'JSON.STRLEN': long_or_none,
+            'JSON.ARRAPPEND': long_or_none,
+            'JSON.ARRINDEX': long_or_none,
+            'JSON.ARRINSERT': long_or_none,
+            'JSON.ARRLEN': long_or_none,
+            'JSON.ARRPOP': json_or_none,
+            'JSON.ARRTRIM': long_or_none,
+            'JSON.OBJLEN': long_or_none,
     }
 
     def __init__(self, **kwargs):
@@ -150,12 +163,78 @@ class Client(StrictRedis):
 
     def JSONStrAppend(self, name, string, path=Path.rootPath()):
         """
-        Appends to the string JSON value under ``path`` at key ``name`` the provided ``string``
+        Appends to the string JSON value under ``path`` at key ``name`` the
+        provided ``string``
         """
         return self.execute_command('JSON.STRAPPEND', name, str_path(path), json.dumps(string))
 
     def JSONStrLen(self, name, path=Path.rootPath()):
         """
-        Returns the length of the string JSON value under ``path`` at key ``name``
+        Returns the length of the string JSON value under ``path`` at key
+        ``name``
         """
         return self.execute_command('JSON.STRLEN', name, str_path(path))
+
+    def JSONArrAppend(self, name, path=Path.rootPath(), *args):
+        """
+        Appends the objects ``args`` to the array under the ``path` in key
+        ``name``
+        """
+        pieces = [name, str_path(path)]
+        for o in args:
+            pieces.append(json.dumps(o))
+        return self.execute_command('JSON.ARRAPPEND', *pieces)
+
+    def JSONArrIndex(self, name, path, scalar, start=0, stop=-1):
+        """
+        Returns the index of ``scalar`` in the JSON array under ``path`` at key
+        ``name``. The search can be limited using the optional inclusive
+        ``start`` and exclusive ``stop`` indices.
+        """
+        return self.execute_command('JSON.ARRINDEX', name, str_path(path), json.dumps(scalar), start, stop)
+
+    def JSONArrInsert(self, name, path, index, *args):
+        """
+        Inserts the objects ``args`` to the array at index ``index`` under the
+        ``path` in key ``name``
+        """
+        pieces = [name, str_path(path), index]
+        for o in args:
+            pieces.append(json.dumps(o))
+        return self.execute_command('JSON.ARRINSERT', *pieces)
+
+    def JSONArrLen(self, name, path=Path.rootPath()):
+        """
+        Returns the length of the array JSON value under ``path`` at key
+        ``name``
+        """
+        return self.execute_command('JSON.ARRLEN', name, str_path(path))
+
+    def JSONArrPop(self, name, path=Path.rootPath(), index=-1):
+        """
+        Pops the element at ``index`` in the array JSON value under ``path`` at
+        key ``name``
+        """
+        return self.execute_command('JSON.ARRPOP', name, str_path(path), index)
+
+    def JSONArrTrim(self, name, path, start, stop):
+        """
+        Trim the array JSON value under ``path`` at key ``name`` to the 
+        inclusive range given by ``start`` and ``stop``
+        """
+        return self.execute_command('JSON.ARRTRIM', name, str_path(path), start, stop)
+
+    def JSONObjKeys(self, name, path=Path.rootPath()):
+        """
+        Returns the key names in the dictionary JSON value under ``path`` at key
+        ``name``
+        """
+        return self.execute_command('JSON.OBJKEYS', name, str_path(path))
+
+    def JSONObjLen(self, name, path=Path.rootPath()):
+        """
+        Returns the length of the dictionary JSON value under ``path`` at key
+        ``name``
+        """
+        return self.execute_command('JSON.OBJLEN', name, str_path(path))
+
