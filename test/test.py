@@ -33,6 +33,45 @@ class ReJSONTestCase(TestCase):
         rj.JSONSet('1', Path.rootPath(), 1)
         self.assertEqual('integer', rj.JSONType('1'))
 
+    def testNumIncrByShouldSucceed(self):
+        "Test JSONNumIncrBy"
+        rj = Client()
+        rj.flushdb()
+
+        rj.JSONSet('num', Path.rootPath(), 1)
+        self.assertEqual(2, rj.JSONNumIncrBy('num', Path.rootPath(), 1))
+        self.assertEqual(2.5, rj.JSONNumIncrBy('num', Path.rootPath(), 0.5))
+        self.assertEqual(1.25, rj.JSONNumIncrBy('num', Path.rootPath(), -1.25))
+
+    def testNumMultByShouldSucceed(self):
+        "Test JSONNumIncrBy"
+        rj = Client()
+        rj.flushdb()
+
+        rj.JSONSet('num', Path.rootPath(), 1)
+        self.assertEqual(2, rj.JSONNumMultBy('num', Path.rootPath(), 2))
+        self.assertEqual(5, rj.JSONNumMultBy('num', Path.rootPath(), 2.5))
+        self.assertEqual(2.5, rj.JSONNumMultBy('num', Path.rootPath(), 0.5))
+
+    def testStrAppendShouldSucceed(self):
+        "Test JSONStrAppend"
+        rj = Client()
+        rj.flushdb()
+
+        rj.JSONSet('str', Path.rootPath(), 'foo')
+        self.assertEqual(6, rj.JSONStrAppend('str', 'bar', Path.rootPath()))
+        self.assertEqual('foobar', rj.JSONGet('str', Path.rootPath()))
+
+    def testStrLenShouldSucceed(self):
+        "Test JSONStrLen"
+        rj = Client()
+        rj.flushdb()
+
+        rj.JSONSet('str', Path.rootPath(), 'foo')
+        self.assertEqual(3, rj.JSONStrLen('str', Path.rootPath()))
+        rj.JSONStrAppend('str', 'bar', Path.rootPath())
+        self.assertEqual(6, rj.JSONStrLen('str', Path.rootPath()))
+
     def testUsageExampleShouldSucceed(self):
         "Test the usage example"
 

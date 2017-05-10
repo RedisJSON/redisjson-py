@@ -13,6 +13,19 @@ def str_path(p):
     else:
         return p
 
+def float_or_long(n):
+    "Return a number from a Redis reply"
+    if isinstance(n, str):
+        return float(n)
+    else:
+        return long(n)
+
+def json_or_none(r):
+    "Return a deserialized JSON object or None"
+    if r:
+        return json.loads(r)
+    return r
+
 def bulk_of_jsons(b):
     "Replace serialized JSON values with objects in a bulk array response (list)"
     for index, item in enumerate(b):
@@ -34,17 +47,19 @@ class Client(StrictRedis):
     }
 
     MODULE_CALLBACKS = {
-            'JSON.DEL': lambda r: int(r),
-            'JSON.GET': lambda r: json.loads(r),
+            'JSON.DEL': long,
+            'JSON.GET': json_or_none,
             'JSON.MGET': bulk_of_jsons,
             'JSON.SET': lambda r: r and nativestr(r) == 'OK',
+            'JSON.NUMINCRBY': float_or_long,
+            'JSON.NUMMULTBY': float_or_long,
+            'JSON.STRAPPEND': long,
+            'JSON.STRLEN': long,
     }
 
     def __init__(self, **kwargs):
         super(Client, self).__init__(**kwargs)
-        
         self.__checkPrerequirements()
-        
         # Inject the callbacks for the module's commands
         self.response_callbacks.update(self.MODULE_CALLBACKS)
 
@@ -103,7 +118,6 @@ class Client(StrictRedis):
         ``xx`` if set to True, set ``value`` only if it exists
         """
         pieces = [name, str_path(path), json.dumps(obj)]
-
         # Handle existential modifiers
         if nx and xx:
             raise Exception('nx and xx are mutually exclusive: use one, the '
@@ -112,7 +126,6 @@ class Client(StrictRedis):
             pieces.append('NX')
         elif xx:
             pieces.append('XX')
-
         return self.execute_command('JSON.SET', *pieces)
 
     def JSONType(self, name, path=Path.rootPath()):
@@ -120,3 +133,29 @@ class Client(StrictRedis):
         Gets the type of the JSON value under ``path`` from key ``name``
         """
         return self.execute_command('JSON.TYPE', name, str_path(path))
+
+    def JSONNumIncrBy(self, name, path, number):
+        """
+        Increments the numeric (integer or floating point) JSON value under
+        ``path`` at key ``name`` by the provided ``number``
+        """
+        return self.execute_command('JSON.NUMINCRBY', name, str_path(path), json.dumps(number))
+
+    def JSONNumMultBy(self, name, path, number):
+        """
+        Multiplies the numeric (integer or floating point) JSON value under
+        ``path`` at key ``name`` with the provided ``number``
+        """
+        return self.execute_command('JSON.NUMMULTBY', name, str_path(path), json.dumps(number))
+
+    def JSONStrAppend(self, name, string, path=Path.rootPath()):
+        """
+        Appends to the string JSON value under ``path`` at key ``name`` the provided ``string``
+        """
+        return self.execute_command('JSON.STRAPPEND', name, str_path(path), json.dumps(string))
+
+    def JSONStrLen(self, name, path=Path.rootPath()):
+        """
+        Returns the length of the string JSON value under ``path`` at key ``name``
+        """
+        return self.execute_command('JSON.STRLEN', name, str_path(path))
