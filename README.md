@@ -16,9 +16,9 @@ $ pip install rejson-py
 ## Usage example
 
 ```python
-from rejson import Client, Path
+from rejson import ReJSONClient, Path
 
-rj = Client(host='localhost', port=6379)
+rj = ReJSONClient(host='localhost', port=6379)
 
 # Set the key `obj` to some object
 obj = {
