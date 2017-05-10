@@ -1,12 +1,11 @@
 import redis
 from unittest import TestCase
-from rejson import Client, Path
+from rejson import ReJSONClient, Path
 
 class ReJSONTestCase(TestCase):
-    
     def testJSONSetGetDelShouldSucceed(self):
         "Test basic JSONSet/Get/Del"
-        rj = Client()
+        rj = ReJSONClient()
         rj.flushdb()
 
         self.assertTrue(rj.JSONSet('foo', Path.rootPath(), 'bar'))
@@ -16,7 +15,7 @@ class ReJSONTestCase(TestCase):
 
     def testMGetShouldSucceed(self):
         "Test JSONMGet"
-        rj = Client()
+        rj = ReJSONClient()
         rj.flushdb()
 
         rj.JSONSet('1', Path.rootPath(), 1)
@@ -27,7 +26,7 @@ class ReJSONTestCase(TestCase):
 
     def testTypeShouldSucceed(self):
         "Test JSONType"
-        rj = Client()
+        rj = ReJSONClient()
         rj.flushdb()
 
         rj.JSONSet('1', Path.rootPath(), 1)
@@ -35,7 +34,7 @@ class ReJSONTestCase(TestCase):
 
     def testNumIncrByShouldSucceed(self):
         "Test JSONNumIncrBy"
-        rj = Client()
+        rj = ReJSONClient()
         rj.flushdb()
 
         rj.JSONSet('num', Path.rootPath(), 1)
@@ -45,7 +44,7 @@ class ReJSONTestCase(TestCase):
 
     def testNumMultByShouldSucceed(self):
         "Test JSONNumIncrBy"
-        rj = Client()
+        rj = ReJSONClient()
         rj.flushdb()
 
         rj.JSONSet('num', Path.rootPath(), 1)
@@ -55,7 +54,7 @@ class ReJSONTestCase(TestCase):
 
     def testStrAppendShouldSucceed(self):
         "Test JSONStrAppend"
-        rj = Client()
+        rj = ReJSONClient()
         rj.flushdb()
 
         rj.JSONSet('str', Path.rootPath(), 'foo')
@@ -64,7 +63,7 @@ class ReJSONTestCase(TestCase):
 
     def testStrLenShouldSucceed(self):
         "Test JSONStrLen"
-        rj = Client()
+        rj = ReJSONClient()
         rj.flushdb()
 
         rj.JSONSet('str', Path.rootPath(), 'foo')
@@ -74,7 +73,7 @@ class ReJSONTestCase(TestCase):
 
     def testArrAppendShouldSucceed(self):
         "Test JSONSArrAppend"
-        rj = Client()
+        rj = ReJSONClient()
         rj.flushdb()
 
         rj.JSONSet('arr', Path.rootPath(), [1])
@@ -82,7 +81,7 @@ class ReJSONTestCase(TestCase):
 
     def testArrIndexShouldSucceed(self):
         "Test JSONSArrIndex"
-        rj = Client()
+        rj = ReJSONClient()
         rj.flushdb()
 
         rj.JSONSet('arr', Path.rootPath(), [0, 1, 2, 3, 4])
@@ -91,7 +90,7 @@ class ReJSONTestCase(TestCase):
 
     def testArrInsertShouldSucceed(self):
         "Test JSONSArrInsert"
-        rj = Client()
+        rj = ReJSONClient()
         rj.flushdb()
 
         rj.JSONSet('arr', Path.rootPath(), [0, 4])
@@ -100,7 +99,7 @@ class ReJSONTestCase(TestCase):
 
     def testArrLenShouldSucceed(self):
         "Test JSONSArrLen"
-        rj = Client()
+        rj = ReJSONClient()
         rj.flushdb()
 
         rj.JSONSet('arr', Path.rootPath(), [0, 1, 2, 3, 4])
@@ -108,7 +107,7 @@ class ReJSONTestCase(TestCase):
 
     def testArrPopShouldSucceed(self):
         "Test JSONSArrPop"
-        rj = Client()
+        rj = ReJSONClient()
         rj.flushdb()
 
         rj.JSONSet('arr', Path.rootPath(), [0, 1, 2, 3, 4])
@@ -120,7 +119,7 @@ class ReJSONTestCase(TestCase):
 
     def testArrTrimShouldSucceed(self):
         "Test JSONSArrPop"
-        rj = Client()
+        rj = ReJSONClient()
         rj.flushdb()
 
         rj.JSONSet('arr', Path.rootPath(), [0, 1, 2, 3, 4])
@@ -129,7 +128,7 @@ class ReJSONTestCase(TestCase):
 
     def testObjKeysShouldSucceed(self):
         "Test JSONSObjKeys"
-        rj = Client()
+        rj = ReJSONClient()
         rj.flushdb()
 
         obj = { 'foo': 'bar', 'baz': 'qaz' }
@@ -142,37 +141,40 @@ class ReJSONTestCase(TestCase):
 
     def testObjLenShouldSucceed(self):
         "Test JSONSObjLen"
-        rj = Client()
+        rj = ReJSONClient()
         rj.flushdb()
 
         obj = { 'foo': 'bar', 'baz': 'qaz' }
         rj.JSONSet('obj', Path.rootPath(), obj)
         self.assertEqual(len(obj), rj.JSONObjLen('obj', Path.rootPath()))
-        
+
     def testUsageExampleShouldSucceed(self):
         "Test the usage example"
 
         # Create a new rejson-py client
-        rj = Client(host='localhost', port=6379)
+        rj = ReJSONClient(host='localhost', port=6379)
 
         # Set the key `obj` to some object
-        rj.JSONSet('obj', Path.rootPath(), {
+        obj = {
             'answer': 42,
             'arr': [None, True, 3.14],
             'truth': {
                 'coord': 'out there'
             }
-        })
+        }
+        rj.JSONSet('obj', Path.rootPath(), obj)
 
         # Get something
-        question = 'Is there anybody... {}?'.format(
+        print 'Is there anybody... {}?'.format(
             rj.JSONGet('obj', Path('.truth.coord'))
         )
 
-        # Delete something (or perhaps nothing)
+        # Delete something (or perhaps nothing), append something and pop it
         rj.JSONDel('obj', Path('.arr[0]'))
+        rj.JSONArrAppend('obj', Path('.arr'), 'something')
+        print '{} popped!'.format(rj.JSONArrPop('obj', Path('.arr')))
 
-        # Update something
+        # Update something else
         rj.JSONSet('obj', Path('.answer'), 2.17)
 
 if __name__ == '__main__':

@@ -1,9 +1,8 @@
 from sys import stdout
 import json
 from redis import StrictRedis, exceptions
-from redis._compat import (b, basestring, bytes, imap, iteritems, iterkeys,
-                           itervalues, izip, long, nativestr, unicode,
-                           safe_unicode)
+from redis.client import BasePipeline
+from redis._compat import (long, nativestr)
 from .path import Path
 
 def str_path(p):
@@ -39,7 +38,7 @@ def bulk_of_jsons(b):
             b[index] = json.loads(item)
     return b
 
-class Client(StrictRedis):
+class ReJSONClient(StrictRedis):
     """
     Implementation of ReJSON commands
 
@@ -70,11 +69,12 @@ class Client(StrictRedis):
             'JSON.OBJLEN': long_or_none,
     }
 
-    def __init__(self, **kwargs):
-        super(Client, self).__init__(**kwargs)
+    def __init__(self, *args, **kwargs):
+        super(ReJSONClient, self).__init__(*args, **kwargs)
         self.__checkPrerequirements()
-        # Inject the callbacks for the module's commands
-        self.response_callbacks.update(self.MODULE_CALLBACKS)
+        # Set the module commands' callbacks
+        for k, v in self.MODULE_CALLBACKS.iteritems():
+            self.set_response_callback(k, v)
 
     def __checkPrerequirements(self):
         "Checks that the module is ready"
@@ -237,4 +237,3 @@ class Client(StrictRedis):
         ``name``
         """
         return self.execute_command('JSON.OBJLEN', name, str_path(path))
-

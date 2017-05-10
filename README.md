@@ -21,22 +21,26 @@ from rejson import Client, Path
 rj = Client(host='localhost', port=6379)
 
 # Set the key `obj` to some object
-rj.JSONSet('obj', Path.rootPath(), {
+obj = {
     'answer': 42,
     'arr': [None, True, 3.14],
     'truth': {
         'coord': 'out there'
     }
-})
+}
+rj.JSONSet('obj', Path.rootPath(), obj)
 
 # Get something
-question = 'Is there anybody... {}?'.format(
+print 'Is there anybody... {}?'.format(
     rj.JSONGet('obj', Path('.truth.coord'))
 )
 
-# Delete something (or perhaps nothing)
+# Delete something (or perhaps nothing), append something and pop it
 rj.JSONDel('obj', Path('.arr[0]'))
+rj.JSONArrAppend('obj', Path('.arr'), 'something')
+print '{} popped!'.format(rj.JSONArrPop('obj', Path('.arr')))
 
-# Update something
+# Update something else
 rj.JSONSet('obj', Path('.answer'), 2.17)
+
 ```
