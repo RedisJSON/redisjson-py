@@ -1,3 +1,4 @@
+import json
 import redis
 from unittest import TestCase
 from rejson import Client, Path
@@ -148,7 +149,7 @@ class ReJSONTestCase(TestCase):
         rj.JSONSet('obj', Path.rootPath(), obj)
         self.assertEqual(len(obj), rj.JSONObjLen('obj', Path.rootPath()))
 
-    def testPipeline(self):
+    def testPipelineShouldSucceed(self):
         "Test pipeline"
         rj = Client()
         rj.flushdb()
@@ -158,8 +159,48 @@ class ReJSONTestCase(TestCase):
         p.JSONGet('foo')
         p.JSONDel('foo')
         p.exists('foo')
-        self.assertListEqual([ True, 'bar', 1, False], p.execute())
+        self.assertListEqual([ True, 'bar', 1, False ], p.execute())
 
+    def testCustomEncoderDecoderShouldSucceed(self):
+        "Test a custom encoder and decoder"
+        
+        class CustomClass(object):
+            key = ''
+            val = ''
+            def __init__(self, k='', v=''):
+                self.key = k
+                self.val = v
+
+        class TestEncoder(json.JSONEncoder):
+            def default(self, obj):
+                if isinstance(obj, CustomClass):
+                    return 'CustomClass:{}:{}'.format(obj.key, obj.val)
+                return json.JSONEncoder.encode(self, obj)
+
+        class TestDecoder(json.JSONDecoder):
+            def decode(self, obj):
+                d = json.JSONDecoder.decode(self, obj)
+                if isinstance(d, basestring) and d.startswith('CustomClass:'):
+                    s = d.split(':')
+                    return CustomClass(k=s[1], v=s[2])
+                return d
+
+        rj = Client(encoder=TestEncoder(), decoder=TestDecoder())
+        rj.flushdb()
+
+        # Check a regular string
+        self.assertTrue(rj.JSONSet('foo', Path.rootPath(), 'bar'))
+        self.assertEqual('string', rj.JSONType('foo', Path.rootPath()))
+        self.assertEqual('bar', rj.JSONGet('foo', Path.rootPath()))
+
+        # Check the custom encoder
+        self.assertTrue(rj.JSONSet('cus', Path.rootPath(), CustomClass('foo', 'bar')))
+        obj = rj.JSONGet('cus', Path.rootPath())
+        self.assertIsNotNone(obj)
+        self.assertEqual(CustomClass, obj.__class__)
+        self.assertEqual('foo', obj.key)
+        self.assertEqual('bar', obj.val)
+        
     def testUsageExampleShouldSucceed(self):
         "Test the usage example"
 

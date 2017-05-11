@@ -6,5 +6,6 @@
 !**/*.md
 
 .env
+.vscode
 
 *.pyc

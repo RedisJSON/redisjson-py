@@ -25,18 +25,22 @@ def long_or_none(r):
         return long(r)
     return r
 
-def json_or_none(r):
+def json_or_none(d):
     "Return a deserialized JSON object or None"
-    if r:
-        return json.loads(r)
-    return r
+    def _f(r):
+        if r:
+            return d(r)
+        return r
+    return _f
 
-def bulk_of_jsons(b):
+def bulk_of_jsons(d):
     "Replace serialized JSON values with objects in a bulk array response (list)"
-    for index, item in enumerate(b):
-        if item is not None:
-            b[index] = json.loads(item)
-    return b
+    def _f(b):
+        for index, item in enumerate(b):
+            if item is not None:
+                b[index] = d(item)
+        return b
+    return _f
 
 class Client(StrictRedis):
     """
@@ -51,49 +55,55 @@ class Client(StrictRedis):
         'ver':  1
     }
 
-    MODULE_CALLBACKS = {
-            'JSON.DEL': long,
-            'JSON.GET': json_or_none,
-            'JSON.MGET': bulk_of_jsons,
-            'JSON.SET': lambda r: r and nativestr(r) == 'OK',
-            'JSON.NUMINCRBY': float_or_long,
-            'JSON.NUMMULTBY': float_or_long,
-            'JSON.STRAPPEND': long_or_none,
-            'JSON.STRLEN': long_or_none,
-            'JSON.ARRAPPEND': long_or_none,
-            'JSON.ARRINDEX': long_or_none,
-            'JSON.ARRINSERT': long_or_none,
-            'JSON.ARRLEN': long_or_none,
-            'JSON.ARRPOP': json_or_none,
-            'JSON.ARRTRIM': long_or_none,
-            'JSON.OBJLEN': long_or_none,
-    }
+    _encoder = None
+    _encode = None
+    _decoder = None
+    _decode = None
 
-    def __init__(self, *args, **kwargs):
-        super(Client, self).__init__(*args, **kwargs)
-        self.__checkPrerequirements()
+    def __init__(self, encoder=None, decoder=None, *args, **kwargs):
+        """
+        Creates a new ReJSON client
+        """
+        self.setEncoder(encoder)
+        self.setDecoder(decoder)
+        StrictRedis.__init__(self, *args, **kwargs)
+
         # Set the module commands' callbacks
-        for k, v in self.MODULE_CALLBACKS.iteritems():
+        MODULE_CALLBACKS = {
+                'JSON.DEL': long,
+                'JSON.GET': json_or_none(self._decode),
+                'JSON.MGET': bulk_of_jsons(self._decode),
+                'JSON.SET': lambda r: r and nativestr(r) == 'OK',
+                'JSON.NUMINCRBY': float_or_long,
+                'JSON.NUMMULTBY': float_or_long,
+                'JSON.STRAPPEND': long_or_none,
+                'JSON.STRLEN': long_or_none,
+                'JSON.ARRAPPEND': long_or_none,
+                'JSON.ARRINDEX': long_or_none,
+                'JSON.ARRINSERT': long_or_none,
+                'JSON.ARRLEN': long_or_none,
+                'JSON.ARRPOP': json_or_none(self._decode),
+                'JSON.ARRTRIM': long_or_none,
+                'JSON.OBJLEN': long_or_none,
+        }
+        for k, v in MODULE_CALLBACKS.iteritems():
             self.set_response_callback(k, v)
+                                    
+    def setEncoder(self, encoder):
+        "Sets the encoder"
+        if not encoder:
+            self._encoder = json.JSONEncoder()
+        else:
+            self._encoder = encoder
+        self._encode = self._encoder.encode
 
-    def __checkPrerequirements(self):
-        "Checks that the module is ready"
-        try:
-            reply = self.execute_command('MODULE', 'LIST')
-        except exceptions.ResponseError as e:
-            if e.message.startswith('unknown command'):
-                raise exceptions.RedisError('Modules are not supported '
-                                            'on your Redis server - consider '
-                                            'upgrading to a newer version.')
-        finally:
-            info = self.MODULE_INFO
-            for r in reply:
-                module = dict(zip(r[0::2], r[1::2]))
-                if info['name'] == module['name'] and \
-                    info['ver'] <= module['ver']:
-                    return
-            raise exceptions.RedisError('ReJSON is not loaded - follow the '
-                                        'instructions at http://rejson.io')
+    def setDecoder(self, decoder):
+        "Sets the decoder"
+        if not decoder:
+            self._decoder = json.JSONDecoder()
+        else:
+            self._decoder = decoder
+        self._decode = self._decoder.decode
 
     def JSONDel(self, name, path=Path.rootPath()):
         """
@@ -130,7 +140,8 @@ class Client(StrictRedis):
         ``nx`` if set to True, set ``value`` only if it does not exist
         ``xx`` if set to True, set ``value`` only if it exists
         """
-        pieces = [name, str_path(path), json.dumps(obj)]
+        pieces = [name, str_path(path), self._encode(obj)]
+
         # Handle existential modifiers
         if nx and xx:
             raise Exception('nx and xx are mutually exclusive: use one, the '
@@ -152,21 +163,21 @@ class Client(StrictRedis):
         Increments the numeric (integer or floating point) JSON value under
         ``path`` at key ``name`` by the provided ``number``
         """
-        return self.execute_command('JSON.NUMINCRBY', name, str_path(path), json.dumps(number))
+        return self.execute_command('JSON.NUMINCRBY', name, str_path(path), self._encode(number))
 
     def JSONNumMultBy(self, name, path, number):
         """
         Multiplies the numeric (integer or floating point) JSON value under
         ``path`` at key ``name`` with the provided ``number``
         """
-        return self.execute_command('JSON.NUMMULTBY', name, str_path(path), json.dumps(number))
+        return self.execute_command('JSON.NUMMULTBY', name, str_path(path), self._encode(number))
 
     def JSONStrAppend(self, name, string, path=Path.rootPath()):
         """
         Appends to the string JSON value under ``path`` at key ``name`` the
         provided ``string``
         """
-        return self.execute_command('JSON.STRAPPEND', name, str_path(path), json.dumps(string))
+        return self.execute_command('JSON.STRAPPEND', name, str_path(path), self._encode(string))
 
     def JSONStrLen(self, name, path=Path.rootPath()):
         """
@@ -182,7 +193,7 @@ class Client(StrictRedis):
         """
         pieces = [name, str_path(path)]
         for o in args:
-            pieces.append(json.dumps(o))
+            pieces.append(self._encode(o))
         return self.execute_command('JSON.ARRAPPEND', *pieces)
 
     def JSONArrIndex(self, name, path, scalar, start=0, stop=-1):
@@ -191,7 +202,7 @@ class Client(StrictRedis):
         ``name``. The search can be limited using the optional inclusive
         ``start`` and exclusive ``stop`` indices.
         """
-        return self.execute_command('JSON.ARRINDEX', name, str_path(path), json.dumps(scalar), start, stop)
+        return self.execute_command('JSON.ARRINDEX', name, str_path(path), self._encode(scalar), start, stop)
 
     def JSONArrInsert(self, name, path, index, *args):
         """
@@ -200,7 +211,7 @@ class Client(StrictRedis):
         """
         pieces = [name, str_path(path), index]
         for o in args:
-            pieces.append(json.dumps(o))
+            pieces.append(self._encode(o))
         return self.execute_command('JSON.ARRINSERT', *pieces)
 
     def JSONArrLen(self, name, path=Path.rootPath()):
@@ -246,12 +257,14 @@ class Client(StrictRedis):
         atomic, pipelines are useful for reducing the back-and-forth overhead
         between the client and server.
         """
-        return Pipeline(
-            self.connection_pool,
-            self.response_callbacks,
-            transaction,
-            shard_hint)
+        p = Pipeline(
+            connection_pool=self.connection_pool,
+            response_callbacks=self.response_callbacks,
+            transaction=transaction,
+            shard_hint=shard_hint)
+        p.setEncoder(self._encoder)
+        p.setDecoder(self._decoder)
+        return p
 
 class Pipeline(BasePipeline, Client):
     "Pipeline for ReJSONClient"
-    pass
