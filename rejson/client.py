@@ -38,7 +38,7 @@ def bulk_of_jsons(b):
             b[index] = json.loads(item)
     return b
 
-class ReJSONClient(StrictRedis):
+class Client(StrictRedis):
     """
     Implementation of ReJSON commands
 
@@ -70,7 +70,7 @@ class ReJSONClient(StrictRedis):
     }
 
     def __init__(self, *args, **kwargs):
-        super(ReJSONClient, self).__init__(*args, **kwargs)
+        super(Client, self).__init__(*args, **kwargs)
         self.__checkPrerequirements()
         # Set the module commands' callbacks
         for k, v in self.MODULE_CALLBACKS.iteritems():
@@ -237,3 +237,21 @@ class ReJSONClient(StrictRedis):
         ``name``
         """
         return self.execute_command('JSON.OBJLEN', name, str_path(path))
+
+    def pipeline(self, transaction=True, shard_hint=None):
+        """
+        Return a new pipeline object that can queue multiple commands for
+        later execution. ``transaction`` indicates whether all commands
+        should be executed atomically. Apart from making a group of operations
+        atomic, pipelines are useful for reducing the back-and-forth overhead
+        between the client and server.
+        """
+        return Pipeline(
+            self.connection_pool,
+            self.response_callbacks,
+            transaction,
+            shard_hint)
+
+class Pipeline(BasePipeline, Client):
+    "Pipeline for ReJSONClient"
+    pass
