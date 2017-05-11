@@ -105,13 +105,13 @@ class Client(StrictRedis):
             self._decoder = decoder
         self._decode = self._decoder.decode
 
-    def JSONDel(self, name, path=Path.rootPath()):
+    def jsondel(self, name, path=Path.rootPath()):
         """
         Deletes the JSON value stored at key ``name`` under ``path``
         """
         return self.execute_command('JSON.DEL', name, str_path(path))
 
-    def JSONGet(self, name, *args):
+    def jsonget(self, name, *args):
         """
         Get the object stored as a JSON value at key ``name``
         ``args`` is zero or more paths, and defaults to root path
@@ -124,7 +124,7 @@ class Client(StrictRedis):
                     pieces.append(str_path(p))
         return self.execute_command('JSON.GET', *pieces)
 
-    def JSONMGet(self, path, *args):
+    def jsonmget(self, path, *args):
         """
         Gets the objects stored as a JSON values under ``path`` from 
         keys ``args``
@@ -134,7 +134,7 @@ class Client(StrictRedis):
         pieces.append(str_path(path))
         return self.execute_command('JSON.MGET', *pieces)
 
-    def JSONSet(self, name, path, obj, nx=False, xx=False):
+    def jsonset(self, name, path, obj, nx=False, xx=False):
         """
         Set the JSON value at key ``name`` under the ``path`` to ``obj``
         ``nx`` if set to True, set ``value`` only if it does not exist
@@ -152,41 +152,41 @@ class Client(StrictRedis):
             pieces.append('XX')
         return self.execute_command('JSON.SET', *pieces)
 
-    def JSONType(self, name, path=Path.rootPath()):
+    def jsontype(self, name, path=Path.rootPath()):
         """
         Gets the type of the JSON value under ``path`` from key ``name``
         """
         return self.execute_command('JSON.TYPE', name, str_path(path))
 
-    def JSONNumIncrBy(self, name, path, number):
+    def jsonnumincrby(self, name, path, number):
         """
         Increments the numeric (integer or floating point) JSON value under
         ``path`` at key ``name`` by the provided ``number``
         """
         return self.execute_command('JSON.NUMINCRBY', name, str_path(path), self._encode(number))
 
-    def JSONNumMultBy(self, name, path, number):
+    def jsonnummultby(self, name, path, number):
         """
         Multiplies the numeric (integer or floating point) JSON value under
         ``path`` at key ``name`` with the provided ``number``
         """
         return self.execute_command('JSON.NUMMULTBY', name, str_path(path), self._encode(number))
 
-    def JSONStrAppend(self, name, string, path=Path.rootPath()):
+    def jsonstrappend(self, name, string, path=Path.rootPath()):
         """
         Appends to the string JSON value under ``path`` at key ``name`` the
         provided ``string``
         """
         return self.execute_command('JSON.STRAPPEND', name, str_path(path), self._encode(string))
 
-    def JSONStrLen(self, name, path=Path.rootPath()):
+    def jsonstrlen(self, name, path=Path.rootPath()):
         """
         Returns the length of the string JSON value under ``path`` at key
         ``name``
         """
         return self.execute_command('JSON.STRLEN', name, str_path(path))
 
-    def JSONArrAppend(self, name, path=Path.rootPath(), *args):
+    def jsonarrappend(self, name, path=Path.rootPath(), *args):
         """
         Appends the objects ``args`` to the array under the ``path` in key
         ``name``
@@ -196,7 +196,7 @@ class Client(StrictRedis):
             pieces.append(self._encode(o))
         return self.execute_command('JSON.ARRAPPEND', *pieces)
 
-    def JSONArrIndex(self, name, path, scalar, start=0, stop=-1):
+    def jsonarrindex(self, name, path, scalar, start=0, stop=-1):
         """
         Returns the index of ``scalar`` in the JSON array under ``path`` at key
         ``name``. The search can be limited using the optional inclusive
@@ -204,7 +204,7 @@ class Client(StrictRedis):
         """
         return self.execute_command('JSON.ARRINDEX', name, str_path(path), self._encode(scalar), start, stop)
 
-    def JSONArrInsert(self, name, path, index, *args):
+    def jsonarrinsert(self, name, path, index, *args):
         """
         Inserts the objects ``args`` to the array at index ``index`` under the
         ``path` in key ``name``
@@ -214,35 +214,35 @@ class Client(StrictRedis):
             pieces.append(self._encode(o))
         return self.execute_command('JSON.ARRINSERT', *pieces)
 
-    def JSONArrLen(self, name, path=Path.rootPath()):
+    def jsonarrlen(self, name, path=Path.rootPath()):
         """
         Returns the length of the array JSON value under ``path`` at key
         ``name``
         """
         return self.execute_command('JSON.ARRLEN', name, str_path(path))
 
-    def JSONArrPop(self, name, path=Path.rootPath(), index=-1):
+    def jsonarrpop(self, name, path=Path.rootPath(), index=-1):
         """
         Pops the element at ``index`` in the array JSON value under ``path`` at
         key ``name``
         """
         return self.execute_command('JSON.ARRPOP', name, str_path(path), index)
 
-    def JSONArrTrim(self, name, path, start, stop):
+    def jsonarrtrim(self, name, path, start, stop):
         """
         Trim the array JSON value under ``path`` at key ``name`` to the 
         inclusive range given by ``start`` and ``stop``
         """
         return self.execute_command('JSON.ARRTRIM', name, str_path(path), start, stop)
 
-    def JSONObjKeys(self, name, path=Path.rootPath()):
+    def jsonobjkeys(self, name, path=Path.rootPath()):
         """
         Returns the key names in the dictionary JSON value under ``path`` at key
         ``name``
         """
         return self.execute_command('JSON.OBJKEYS', name, str_path(path))
 
-    def JSONObjLen(self, name, path=Path.rootPath()):
+    def jsonobjlen(self, name, path=Path.rootPath()):
         """
         Returns the length of the dictionary JSON value under ``path`` at key
         ``name``

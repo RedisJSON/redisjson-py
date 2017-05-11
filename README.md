@@ -28,20 +28,26 @@ obj = {
         'coord': 'out there'
     }
 }
-rj.JSONSet('obj', Path.rootPath(), obj)
+rj.jsonset('obj', Path.rootPath(), obj)
 
 # Get something
 print 'Is there anybody... {}?'.format(
-    rj.JSONGet('obj', Path('.truth.coord'))
+    rj.jsonget('obj', Path('.truth.coord'))
 )
 
 # Delete something (or perhaps nothing), append something and pop it
-rj.JSONDel('obj', Path('.arr[0]'))
-rj.JSONArrAppend('obj', Path('.arr'), 'something')
-print '{} popped!'.format(rj.JSONArrPop('obj', Path('.arr')))
+rj.jsondel('obj', Path('.arr[0]'))
+rj.jsonarrappend('obj', Path('.arr'), 'something')
+print '{} popped!'.format(rj.jsonarrpop('obj', Path('.arr')))
 
 # Update something else
-rj.JSONSet('obj', Path('.answer'), 2.17)
+rj.jsonset('obj', Path('.answer'), 2.17)
+
+# And use just like the regular redis-py client
+jp = rj.pipeline()
+jp.set('foo', 'bar')
+jp.jsonset('baz', Path.rootPath(), 'qaz')
+jp.execute()
 
 ```
 

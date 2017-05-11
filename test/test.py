@@ -9,9 +9,9 @@ class ReJSONTestCase(TestCase):
         rj = Client()
         rj.flushdb()
 
-        self.assertTrue(rj.JSONSet('foo', Path.rootPath(), 'bar'))
-        self.assertEqual('bar', rj.JSONGet('foo'))
-        self.assertEqual(1, rj.JSONDel('foo'))
+        self.assertTrue(rj.jsonset('foo', Path.rootPath(), 'bar'))
+        self.assertEqual('bar', rj.jsonget('foo'))
+        self.assertEqual(1, rj.jsondel('foo'))
         self.assertFalse(rj.exists('foo'))
 
     def testMGetShouldSucceed(self):
@@ -19,9 +19,9 @@ class ReJSONTestCase(TestCase):
         rj = Client()
         rj.flushdb()
 
-        rj.JSONSet('1', Path.rootPath(), 1)
-        rj.JSONSet('2', Path.rootPath(), 2)
-        r = rj.JSONMGet(Path.rootPath(), '1', '2')
+        rj.jsonset('1', Path.rootPath(), 1)
+        rj.jsonset('2', Path.rootPath(), 2)
+        r = rj.jsonmget(Path.rootPath(), '1', '2')
         e = [1, 2]
         self.assertListEqual(e, r)
 
@@ -30,102 +30,102 @@ class ReJSONTestCase(TestCase):
         rj = Client()
         rj.flushdb()
 
-        rj.JSONSet('1', Path.rootPath(), 1)
-        self.assertEqual('integer', rj.JSONType('1'))
+        rj.jsonset('1', Path.rootPath(), 1)
+        self.assertEqual('integer', rj.jsontype('1'))
 
     def testNumIncrByShouldSucceed(self):
         "Test JSONNumIncrBy"
         rj = Client()
         rj.flushdb()
 
-        rj.JSONSet('num', Path.rootPath(), 1)
-        self.assertEqual(2, rj.JSONNumIncrBy('num', Path.rootPath(), 1))
-        self.assertEqual(2.5, rj.JSONNumIncrBy('num', Path.rootPath(), 0.5))
-        self.assertEqual(1.25, rj.JSONNumIncrBy('num', Path.rootPath(), -1.25))
+        rj.jsonset('num', Path.rootPath(), 1)
+        self.assertEqual(2, rj.jsonnumincrby('num', Path.rootPath(), 1))
+        self.assertEqual(2.5, rj.jsonnumincrby('num', Path.rootPath(), 0.5))
+        self.assertEqual(1.25, rj.jsonnumincrby('num', Path.rootPath(), -1.25))
 
     def testNumMultByShouldSucceed(self):
         "Test JSONNumIncrBy"
         rj = Client()
         rj.flushdb()
 
-        rj.JSONSet('num', Path.rootPath(), 1)
-        self.assertEqual(2, rj.JSONNumMultBy('num', Path.rootPath(), 2))
-        self.assertEqual(5, rj.JSONNumMultBy('num', Path.rootPath(), 2.5))
-        self.assertEqual(2.5, rj.JSONNumMultBy('num', Path.rootPath(), 0.5))
+        rj.jsonset('num', Path.rootPath(), 1)
+        self.assertEqual(2, rj.jsonnummultby('num', Path.rootPath(), 2))
+        self.assertEqual(5, rj.jsonnummultby('num', Path.rootPath(), 2.5))
+        self.assertEqual(2.5, rj.jsonnummultby('num', Path.rootPath(), 0.5))
 
     def testStrAppendShouldSucceed(self):
         "Test JSONStrAppend"
         rj = Client()
         rj.flushdb()
 
-        rj.JSONSet('str', Path.rootPath(), 'foo')
-        self.assertEqual(6, rj.JSONStrAppend('str', 'bar', Path.rootPath()))
-        self.assertEqual('foobar', rj.JSONGet('str', Path.rootPath()))
+        rj.jsonset('str', Path.rootPath(), 'foo')
+        self.assertEqual(6, rj.jsonstrappend('str', 'bar', Path.rootPath()))
+        self.assertEqual('foobar', rj.jsonget('str', Path.rootPath()))
 
     def testStrLenShouldSucceed(self):
         "Test JSONStrLen"
         rj = Client()
         rj.flushdb()
 
-        rj.JSONSet('str', Path.rootPath(), 'foo')
-        self.assertEqual(3, rj.JSONStrLen('str', Path.rootPath()))
-        rj.JSONStrAppend('str', 'bar', Path.rootPath())
-        self.assertEqual(6, rj.JSONStrLen('str', Path.rootPath()))
+        rj.jsonset('str', Path.rootPath(), 'foo')
+        self.assertEqual(3, rj.jsonstrlen('str', Path.rootPath()))
+        rj.jsonstrappend('str', 'bar', Path.rootPath())
+        self.assertEqual(6, rj.jsonstrlen('str', Path.rootPath()))
 
     def testArrAppendShouldSucceed(self):
         "Test JSONSArrAppend"
         rj = Client()
         rj.flushdb()
 
-        rj.JSONSet('arr', Path.rootPath(), [1])
-        self.assertEqual(2, rj.JSONArrAppend('arr', Path.rootPath(), 2))
+        rj.jsonset('arr', Path.rootPath(), [1])
+        self.assertEqual(2, rj.jsonarrappend('arr', Path.rootPath(), 2))
 
     def testArrIndexShouldSucceed(self):
         "Test JSONSArrIndex"
         rj = Client()
         rj.flushdb()
 
-        rj.JSONSet('arr', Path.rootPath(), [0, 1, 2, 3, 4])
-        self.assertEqual(1, rj.JSONArrIndex('arr', Path.rootPath(), 1))
-        self.assertEqual(-1, rj.JSONArrIndex('arr', Path.rootPath(), 1, 2))
+        rj.jsonset('arr', Path.rootPath(), [0, 1, 2, 3, 4])
+        self.assertEqual(1, rj.jsonarrindex('arr', Path.rootPath(), 1))
+        self.assertEqual(-1, rj.jsonarrindex('arr', Path.rootPath(), 1, 2))
 
     def testArrInsertShouldSucceed(self):
         "Test JSONSArrInsert"
         rj = Client()
         rj.flushdb()
 
-        rj.JSONSet('arr', Path.rootPath(), [0, 4])
-        self.assertEqual(5, rj.JSONArrInsert('arr', Path.rootPath(), 1, *[1, 2, 3,]))
-        self.assertListEqual([0, 1, 2, 3, 4], rj.JSONGet('arr'))
+        rj.jsonset('arr', Path.rootPath(), [0, 4])
+        self.assertEqual(5, rj.jsonarrinsert('arr', Path.rootPath(), 1, *[1, 2, 3,]))
+        self.assertListEqual([0, 1, 2, 3, 4], rj.jsonget('arr'))
 
     def testArrLenShouldSucceed(self):
         "Test JSONSArrLen"
         rj = Client()
         rj.flushdb()
 
-        rj.JSONSet('arr', Path.rootPath(), [0, 1, 2, 3, 4])
-        self.assertEqual(5, rj.JSONArrLen('arr', Path.rootPath()))
+        rj.jsonset('arr', Path.rootPath(), [0, 1, 2, 3, 4])
+        self.assertEqual(5, rj.jsonarrlen('arr', Path.rootPath()))
 
     def testArrPopShouldSucceed(self):
         "Test JSONSArrPop"
         rj = Client()
         rj.flushdb()
 
-        rj.JSONSet('arr', Path.rootPath(), [0, 1, 2, 3, 4])
-        self.assertEqual(4, rj.JSONArrPop('arr', Path.rootPath(), 4))
-        self.assertEqual(3, rj.JSONArrPop('arr', Path.rootPath(), -1))
-        self.assertEqual(2, rj.JSONArrPop('arr', Path.rootPath()))
-        self.assertEqual(0, rj.JSONArrPop('arr', Path.rootPath(), 0))
-        self.assertListEqual([1], rj.JSONGet('arr'))
+        rj.jsonset('arr', Path.rootPath(), [0, 1, 2, 3, 4])
+        self.assertEqual(4, rj.jsonarrpop('arr', Path.rootPath(), 4))
+        self.assertEqual(3, rj.jsonarrpop('arr', Path.rootPath(), -1))
+        self.assertEqual(2, rj.jsonarrpop('arr', Path.rootPath()))
+        self.assertEqual(0, rj.jsonarrpop('arr', Path.rootPath(), 0))
+        self.assertListEqual([1], rj.jsonget('arr'))
 
     def testArrTrimShouldSucceed(self):
         "Test JSONSArrPop"
         rj = Client()
         rj.flushdb()
 
-        rj.JSONSet('arr', Path.rootPath(), [0, 1, 2, 3, 4])
-        self.assertEqual(3, rj.JSONArrTrim('arr', Path.rootPath(), 1, 3))
-        self.assertListEqual([1, 2, 3], rj.JSONGet('arr'))
+        rj.jsonset('arr', Path.rootPath(), [0, 1, 2, 3, 4])
+        self.assertEqual(3, rj.jsonarrtrim('arr', Path.rootPath(), 1, 3))
+        self.assertListEqual([1, 2, 3], rj.jsonget('arr'))
 
     def testObjKeysShouldSucceed(self):
         "Test JSONSObjKeys"
@@ -133,8 +133,8 @@ class ReJSONTestCase(TestCase):
         rj.flushdb()
 
         obj = { 'foo': 'bar', 'baz': 'qaz' }
-        rj.JSONSet('obj', Path.rootPath(), obj)
-        keys = rj.JSONObjKeys('obj', Path.rootPath())
+        rj.jsonset('obj', Path.rootPath(), obj)
+        keys = rj.jsonobjkeys('obj', Path.rootPath())
         keys.sort()
         exp = [k for k in obj.iterkeys()]
         exp.sort()
@@ -146,8 +146,8 @@ class ReJSONTestCase(TestCase):
         rj.flushdb()
 
         obj = { 'foo': 'bar', 'baz': 'qaz' }
-        rj.JSONSet('obj', Path.rootPath(), obj)
-        self.assertEqual(len(obj), rj.JSONObjLen('obj', Path.rootPath()))
+        rj.jsonset('obj', Path.rootPath(), obj)
+        self.assertEqual(len(obj), rj.jsonobjlen('obj', Path.rootPath()))
 
     def testPipelineShouldSucceed(self):
         "Test pipeline"
@@ -155,9 +155,9 @@ class ReJSONTestCase(TestCase):
         rj.flushdb()
 
         p = rj.pipeline()
-        p.JSONSet('foo', Path.rootPath(), 'bar')
-        p.JSONGet('foo')
-        p.JSONDel('foo')
+        p.jsonset('foo', Path.rootPath(), 'bar')
+        p.jsonget('foo')
+        p.jsondel('foo')
         p.exists('foo')
         self.assertListEqual([ True, 'bar', 1, False ], p.execute())
 
@@ -189,13 +189,13 @@ class ReJSONTestCase(TestCase):
         rj.flushdb()
 
         # Check a regular string
-        self.assertTrue(rj.JSONSet('foo', Path.rootPath(), 'bar'))
-        self.assertEqual('string', rj.JSONType('foo', Path.rootPath()))
-        self.assertEqual('bar', rj.JSONGet('foo', Path.rootPath()))
+        self.assertTrue(rj.jsonset('foo', Path.rootPath(), 'bar'))
+        self.assertEqual('string', rj.jsontype('foo', Path.rootPath()))
+        self.assertEqual('bar', rj.jsonget('foo', Path.rootPath()))
 
         # Check the custom encoder
-        self.assertTrue(rj.JSONSet('cus', Path.rootPath(), CustomClass('foo', 'bar')))
-        obj = rj.JSONGet('cus', Path.rootPath())
+        self.assertTrue(rj.jsonset('cus', Path.rootPath(), CustomClass('foo', 'bar')))
+        obj = rj.jsonget('cus', Path.rootPath())
         self.assertIsNotNone(obj)
         self.assertEqual(CustomClass, obj.__class__)
         self.assertEqual('foo', obj.key)
@@ -215,20 +215,26 @@ class ReJSONTestCase(TestCase):
                 'coord': 'out there'
             }
         }
-        rj.JSONSet('obj', Path.rootPath(), obj)
+        rj.jsonset('obj', Path.rootPath(), obj)
 
         # Get something
         print 'Is there anybody... {}?'.format(
-            rj.JSONGet('obj', Path('.truth.coord'))
+            rj.jsonget('obj', Path('.truth.coord'))
         )
 
         # Delete something (or perhaps nothing), append something and pop it
-        rj.JSONDel('obj', Path('.arr[0]'))
-        rj.JSONArrAppend('obj', Path('.arr'), 'something')
-        print '{} popped!'.format(rj.JSONArrPop('obj', Path('.arr')))
+        rj.jsondel('obj', Path('.arr[0]'))
+        rj.jsonarrappend('obj', Path('.arr'), 'something')
+        print '{} popped!'.format(rj.jsonarrpop('obj', Path('.arr')))
 
         # Update something else
-        rj.JSONSet('obj', Path('.answer'), 2.17)
+        rj.jsonset('obj', Path('.answer'), 2.17)
+
+        # And use just like the regular redis-py client
+        jp = rj.pipeline()
+        jp.set('foo', 'bar')
+        jp.jsonset('baz', Path.rootPath(), 'qaz')
+        jp.execute()
 
 if __name__ == '__main__':
     unittest.main()
