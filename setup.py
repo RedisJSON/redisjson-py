@@ -9,7 +9,7 @@ setup(
     description='ReJSON Python Client',
     url='http://github.com/RedisLabs/rejson-py',
     packages=find_packages(),
-    install_requires=['redis', 'hiredis', 'rmtest'],
+    install_requires=['redis', 'hiredis'],
     classifiers=[
         'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
