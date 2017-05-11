@@ -4,7 +4,8 @@ from setuptools import setup, find_packages
 setup(
     name='rejson',
     version='0.1',
-
+    author='Redis Labs',
+    author_email='oss@redislabs.com',
     description='ReJSON Python Client',
     url='http://github.com/RedisLabs/rejson-py',
     packages=find_packages(),
