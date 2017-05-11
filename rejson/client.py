@@ -44,10 +44,11 @@ def bulk_of_jsons(d):
 
 class Client(StrictRedis):
     """
-    Implementation of ReJSON commands
+    This class subclasses redis-py's `StrictRedis` and implements ReJSON's
+    commmands (prefixed with "json").
 
-    This class provides an interface for ReJSON's commands and performs on-the-fly
-    serialization/deserialization of objects to/from JSON.
+    The client performs on-the-fly serialization/deserialization of objects
+    to/from JSON, and provides the ability to use a custom encoder/decoder.
     """
 
     MODULE_INFO = {
@@ -62,7 +63,11 @@ class Client(StrictRedis):
 
     def __init__(self, encoder=None, decoder=None, *args, **kwargs):
         """
-        Creates a new ReJSON client
+        Creates a new ReJSON client.
+
+
+        ``encoder`` is an instance of a ``json.JSONEncoder`` class.
+        ``decoder`` is an instance of a ``json.JSONDecoder`` class.
         """
         self.setEncoder(encoder)
         self.setDecoder(decoder)
