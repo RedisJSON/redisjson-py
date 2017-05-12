@@ -200,7 +200,7 @@ class ReJSONTestCase(TestCase):
         self.assertEqual(CustomClass, obj.__class__)
         self.assertEqual('foo', obj.key)
         self.assertEqual('bar', obj.val)
-        
+
     def testUsageExampleShouldSucceed(self):
         "Test the usage example"
 

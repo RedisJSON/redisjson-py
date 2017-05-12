@@ -51,6 +51,69 @@ jp.jsonset('baz', Path.rootPath(), 'qaz')
 jp.execute()
 ```
 
+## Encoding/Decoding
+
+rejson-py uses Python's [`json`](https://docs.python.org/2/library/json.html).
+The client can be set to use custom encoders/decoders at creation, or by calling
+explicitly the [`setEncoder()`](API.md#setencoder) and
+[`setDecoder()`](API.md#setdecoder) methods, respectively.
+
+The following shows how to use this for a custom class that's stored as
+a JSON string for example:
+
+```python
+from json import JSONEncoder, JSONDecoder
+from rejson import Client
+
+class CustomClass(object):
+    "Some non-JSON-serializable"
+    def __init__(self, s=None):
+        if s is not None:
+            # deserialize the instance from the serialization
+            if s.startswith('CustomClass:'):
+                ...
+            else:
+                raise Exception('unknown format')
+        else:
+            # initialize the instance
+            ...
+
+    def __str__(self):
+        _str = 'CustomClass:'
+        # append the instance's state to the serialization
+        ...
+        return _str
+
+    ...
+
+class CustomEncoder(JSONEncoder):
+    "A custom encoder for the custom class"
+    def default(self, obj):
+        if isinstance(obj, CustomClass):
+            return str(obj)
+        return json.JSONEncoder.encode(self, obj)
+
+class TestDecoder(JSONDecoder):
+    "A custom decoder for the custom class"
+    def decode(self, obj):
+        d = json.JSONDecoder.decode(self, obj)
+        if isinstance(d, basestring) and d.startswith('CustomClass:'):
+            return CustomClass(d)
+        return d
+
+# Create a new instance of CustomClass
+obj = CustomClass()
+
+# Create a new client with the custom encoder and decoder
+rj = Client(encoder=CustomEncoder(), decoder=CustomDecoder())
+
+# Store the object
+rj.jsonset('custom', Path.rootPath(), obj))
+
+# Retrieve it
+obj = rj.jsonget('custom', Path.rootPath())
+```
+
 ## Class Client
 This class subclasses redis-py's `StrictRedis` and implements ReJSON's
 commmands (prefixed with "json").
@@ -68,9 +131,8 @@ def __init__(self, encoder=None, decoder=None, *args, **kwargs)
 
 Creates a new ReJSON client.
 
-
-``encoder`` is an instance of a ``json.JSONEncoder`` class.
-``decoder`` is an instance of a ``json.JSONDecoder`` class.
+``encoder`` should be an instance of a ``json.JSONEncoder`` class
+``decoder`` should be an instance of a ``json.JSONDecoder`` class
 
 
 ### jsonarrappend
@@ -303,7 +365,8 @@ def setDecoder(self, decoder)
 
 
 
-Sets the decoder
+Sets the client's decoder
+``decoder`` should be an instance of a ``json.JSONDecoder`` class
 
 
 ### setEncoder
@@ -315,13 +378,14 @@ def setEncoder(self, encoder)
 
 
 
-Sets the encoder
+Sets the client's encoder
+``encoder`` should be an instance of a ``json.JSONEncoder`` class
 
 
 
 
 ## Class Path
-None
+This class represents a path in a JSON value
 ### \_\_init\_\_
 ```py
 
@@ -329,6 +393,9 @@ def __init__(self, path)
 
 ```
 
+
+
+Make a new path based on the string representation in `path`
 
 
 

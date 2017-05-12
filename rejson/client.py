@@ -65,9 +65,8 @@ class Client(StrictRedis):
         """
         Creates a new ReJSON client.
 
-
-        ``encoder`` is an instance of a ``json.JSONEncoder`` class.
-        ``decoder`` is an instance of a ``json.JSONDecoder`` class.
+        ``encoder`` should be an instance of a ``json.JSONEncoder`` class
+        ``decoder`` should be an instance of a ``json.JSONDecoder`` class
         """
         self.setEncoder(encoder)
         self.setDecoder(decoder)
@@ -95,7 +94,10 @@ class Client(StrictRedis):
             self.set_response_callback(k, v)
                                     
     def setEncoder(self, encoder):
-        "Sets the encoder"
+        """
+        Sets the client's encoder
+        ``encoder`` should be an instance of a ``json.JSONEncoder`` class
+        """
         if not encoder:
             self._encoder = json.JSONEncoder()
         else:
@@ -103,7 +105,10 @@ class Client(StrictRedis):
         self._encode = self._encoder.encode
 
     def setDecoder(self, decoder):
-        "Sets the decoder"
+        """
+        Sets the client's decoder
+        ``decoder`` should be an instance of a ``json.JSONDecoder`` class
+        """
         if not decoder:
             self._decoder = json.JSONDecoder()
         else:
@@ -261,6 +266,8 @@ class Client(StrictRedis):
         should be executed atomically. Apart from making a group of operations
         atomic, pipelines are useful for reducing the back-and-forth overhead
         between the client and server.
+
+        Overridden in order to provide the right client through the pipeline.
         """
         p = Pipeline(
             connection_pool=self.connection_pool,
