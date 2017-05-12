@@ -10,7 +10,7 @@ def getmarkdown(module):
     if module.__doc__:
         output.append(module.__doc__)
     output.extend(getclasses(module))
-    return "\n".join((str(x).replace('\n',' ') for x in output))
+    return "\n".join(str(x) for x in output)
 
 def getclasses(item):
     output = list()
@@ -30,9 +30,16 @@ def getclasses(item):
 
 def getfunctions(item):
     output = list()
+    bcfuncs = set()
+    # Get the base class functions
+    for bc in item.__bases__:
+        for func in pydoc.inspect.getmembers(bc, pydoc.inspect.ismethod):
+            if func[0].startswith('_'):
+                continue
+            bcfuncs.add(func[0])
     #print item
     for func in pydoc.inspect.getmembers(item, pydoc.inspect.ismethod):
-        if func[0].startswith('_') and func[0] != '__init__':
+        if (func[0].startswith('_') and func[0] != '__init__') or func[0] in bcfuncs:
             continue
         output.append(function_header.format(func[0].replace('_', '\\_')))
         # Get the signature
@@ -59,4 +66,5 @@ def generatedocs(module):
         print("Error while trying to import " + module)
 
 if __name__ == '__main__':
-    print generatedocs(sys.argv[1])
+    # print generatedocs(sys.argv[1])
+    print generatedocs('rejson')
