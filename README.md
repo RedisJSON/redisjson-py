@@ -10,13 +10,13 @@ JSON.
 ## Installation
 
 ```bash
-$ pip install rejson-py
+$ pip install rejson
 ```
 
 ## Usage example
 
 ```python
-from rejson import ReJSONClient, Path
+from rejson import Client, Path
 
 rj = Client(host='localhost', port=6379)
 
