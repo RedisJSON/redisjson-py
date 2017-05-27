@@ -1,6 +1,5 @@
 from __future__ import print_function
 import json
-import redis
 import unittest
 from unittest import TestCase
 from rejson import Client, Path
@@ -88,7 +87,8 @@ class ReJSONTestCase(TestCase):
         "Test JSONSArrInsert"
 
         rj.jsonset('arr', Path.rootPath(), [0, 4])
-        self.assertEqual(5, rj.jsonarrinsert('arr', Path.rootPath(), 1, *[1, 2, 3,]))
+        self.assertEqual(5, rj.jsonarrinsert('arr',
+                                             Path.rootPath(), 1, *[1, 2, 3, ]))
         self.assertListEqual([0, 1, 2, 3, 4], rj.jsonget('arr'))
 
     def testArrLenShouldSucceed(self):
@@ -117,7 +117,7 @@ class ReJSONTestCase(TestCase):
     def testObjKeysShouldSucceed(self):
         "Test JSONSObjKeys"
 
-        obj = { 'foo': 'bar', 'baz': 'qaz' }
+        obj = {'foo': 'bar', 'baz': 'qaz'}
         rj.jsonset('obj', Path.rootPath(), obj)
         keys = rj.jsonobjkeys('obj', Path.rootPath())
         keys.sort()
@@ -128,7 +128,7 @@ class ReJSONTestCase(TestCase):
     def testObjLenShouldSucceed(self):
         "Test JSONSObjLen"
 
-        obj = { 'foo': 'bar', 'baz': 'qaz' }
+        obj = {'foo': 'bar', 'baz': 'qaz'}
         rj.jsonset('obj', Path.rootPath(), obj)
         self.assertEqual(len(obj), rj.jsonobjlen('obj', Path.rootPath()))
 
@@ -140,14 +140,15 @@ class ReJSONTestCase(TestCase):
         p.jsonget('foo')
         p.jsondel('foo')
         p.exists('foo')
-        self.assertListEqual([ True, 'bar', 1, False ], p.execute())
+        self.assertListEqual([True, 'bar', 1, False], p.execute())
 
     def testCustomEncoderDecoderShouldSucceed(self):
         "Test a custom encoder and decoder"
-        
+
         class CustomClass(object):
             key = ''
             val = ''
+
             def __init__(self, k='', v=''):
                 self.key = k
                 self.val = v
@@ -175,7 +176,8 @@ class ReJSONTestCase(TestCase):
         self.assertEqual('bar', rj.jsonget('foo', Path.rootPath()))
 
         # Check the custom encoder
-        self.assertTrue(rj.jsonset('cus', Path.rootPath(), CustomClass('foo', 'bar')))
+        self.assertTrue(rj.jsonset('cus', Path.rootPath(),
+                                   CustomClass('foo', 'bar')))
         obj = rj.jsonget('cus', Path.rootPath())
         self.assertIsNotNone(obj)
         self.assertEqual(CustomClass, obj.__class__)
@@ -216,6 +218,7 @@ class ReJSONTestCase(TestCase):
         jp.set('foo', 'bar')
         jp.jsonset('baz', Path.rootPath(), 'qaz')
         jp.execute()
+
 
 if __name__ == '__main__':
     unittest.main()
