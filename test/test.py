@@ -1,4 +1,5 @@
 from __future__ import print_function
+import six
 import json
 import unittest
 from unittest import TestCase
@@ -121,7 +122,7 @@ class ReJSONTestCase(TestCase):
         rj.jsonset('obj', Path.rootPath(), obj)
         keys = rj.jsonobjkeys('obj', Path.rootPath())
         keys.sort()
-        exp = [k for k in obj.iterkeys()]
+        exp = [k for k in six.iterkeys(obj)]
         exp.sort()
         self.assertListEqual(exp, keys)
 
@@ -162,12 +163,14 @@ class ReJSONTestCase(TestCase):
         class TestDecoder(json.JSONDecoder):
             def decode(self, obj):
                 d = json.JSONDecoder.decode(self, obj)
-                if isinstance(d, basestring) and d.startswith('CustomClass:'):
+                if isinstance(d, six.string_types) and \
+                        d.startswith('CustomClass:'):
                     s = d.split(':')
                     return CustomClass(k=s[1], v=s[2])
                 return d
 
-        rj = Client(encoder=TestEncoder(), decoder=TestDecoder(), port=port)
+        rj = Client(encoder=TestEncoder(), decoder=TestDecoder(),
+                    port=port, decode_responses=True)
         rj.flushdb()
 
         # Check a regular string
@@ -188,7 +191,7 @@ class ReJSONTestCase(TestCase):
         "Test the usage example"
 
         # Create a new rejson-py client
-        rj = Client(host='localhost', port=port)
+        rj = Client(host='localhost', port=port, decode_responses=True)
 
         # Set the key `obj` to some object
         obj = {
