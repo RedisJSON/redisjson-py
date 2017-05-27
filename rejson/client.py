@@ -1,7 +1,6 @@
 import six
-from sys import stdout
 import json
-from redis import StrictRedis, exceptions
+from redis import StrictRedis
 from redis.client import BasePipeline
 from redis._compat import (long, nativestr)
 from .path import Path
