@@ -1,3 +1,4 @@
+from __future__ import print_function
 import json
 import redis
 import unittest
@@ -198,14 +199,14 @@ class ReJSONTestCase(TestCase):
         rj.jsonset('obj', Path.rootPath(), obj)
 
         # Get something
-        print 'Is there anybody... {}?'.format(
+        print('Is there anybody... {}?'.format(
             rj.jsonget('obj', Path('.truth.coord'))
-        )
+        ))
 
         # Delete something (or perhaps nothing), append something and pop it
         rj.jsondel('obj', Path('.arr[0]'))
         rj.jsonarrappend('obj', Path('.arr'), 'something')
-        print '{} popped!'.format(rj.jsonarrpop('obj', Path('.arr')))
+        print('{} popped!'.format(rj.jsonarrpop('obj', Path('.arr'))))
 
         # Update something else
         rj.jsonset('obj', Path('.answer'), 2.17)
