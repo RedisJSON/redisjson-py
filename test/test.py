@@ -1,5 +1,6 @@
 import json
 import redis
+import unittest
 from unittest import TestCase
 from rejson import Client, Path
 
