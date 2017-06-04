@@ -21,6 +21,4 @@ before_script:
   - ./redis/src/redis-server --loadmodule ReJSON/src/rejson.so &
 
 script:
-  - cd test
-  - python -munittest discover
-
+  - python setup.py test
