@@ -1,5 +1,7 @@
 # ReJSON Python Client
 
+[![Build Status](https://travis-ci.org/RedisLabs/rejson-py.svg?branch=master)](https://travis-ci.org/RedisLabs/rejson-py)
+
 rejson-py is a package that allows storing, updating and querying objects as
 JSON documents in a [Redis](https://redis.io) database that is extended with the
 [ReJSON module](https://github.com/redislabsmodules/rejson). The package extends
