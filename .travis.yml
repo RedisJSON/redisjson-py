@@ -14,7 +14,7 @@ install:
   - pip install -e .
 
 before_script:
-  - ./redis/src/redis-server --loadmodule rejson/src/rejson.so &
+  - ./redis/src/redis-server --loadmodule ReJSON/src/rejson.so &
 
 script:
   - cd test
