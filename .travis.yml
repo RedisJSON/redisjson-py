@@ -5,9 +5,9 @@ python:
 
 install:
   # Get Redis
-  - git clone -depth=1 https://github.com/antirez/redis/redis.git && cd redis && make && cd ..
+  - git clone --depth=1 https://github.com/antirez/redis/redis.git && cd redis && make && cd ..
   # Get ReJSON
-  - git clone -depth=1 https://github.com/RedisLabsModules/ReJSON && cd ReJSON && make && cd ..
+  - git clone --depth=1 https://github.com/RedisLabsModules/ReJSON && cd ReJSON && make && cd ..
   # Install requirements
   - pip install -r requirements.txt
   # Install rejson-py to test rejson-py
