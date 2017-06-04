@@ -1,6 +1,6 @@
-from sys import stdout
+import six
 import json
-from redis import StrictRedis, exceptions
+from redis import StrictRedis
 from redis.client import BasePipeline
 from redis._compat import (long, nativestr)
 from .path import Path
@@ -14,7 +14,7 @@ def str_path(p):
 
 def float_or_long(n):
     "Return a number from a Redis reply"
-    if isinstance(n, str):
+    if isinstance(n, six.string_types):
         return float(n)
     else:
         return long(n)
@@ -90,7 +90,7 @@ class Client(StrictRedis):
                 'JSON.ARRTRIM': long_or_none,
                 'JSON.OBJLEN': long_or_none,
         }
-        for k, v in MODULE_CALLBACKS.iteritems():
+        for k, v in six.iteritems(MODULE_CALLBACKS):
             self.set_response_callback(k, v)
                                     
     def setEncoder(self, encoder):
