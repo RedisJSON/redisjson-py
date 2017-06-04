@@ -7,7 +7,7 @@ from rejson import Client, Path
 
 
 rj = None
-port = 6378
+port = 6379
 
 
 class ReJSONTestCase(TestCase):
