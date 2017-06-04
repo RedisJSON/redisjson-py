@@ -14,11 +14,14 @@ install:
   - git clone --depth=1 https://github.com/RedisLabsModules/ReJSON.git && cd ReJSON && make && cd ..
   # Install requirements
   - pip install -r requirements.txt
+  - pip install coveralls
+  - pip install wheel
+  - pip install twine
   # Install rejson-py to test rejson-py
-  - pip install -e .
+  # - pip install -e .
 
 before_script:
   - ./redis/src/redis-server --loadmodule ReJSON/src/rejson.so &
 
 script:
-  - python setup.py test
+  - coverage run --source=rejson setup.py test
