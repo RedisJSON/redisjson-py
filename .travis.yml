@@ -1,0 +1,22 @@
+language: python
+python:
+  - "2.7"
+  - "3.5"
+
+install:
+  # Get Redis
+  - git clone -depth=1 https://github.com/antirez/redis/redis.git && cd redis && make && cd ..
+  # Get ReJSON
+  - git clone -depth=1 https://github.com/RedisLabsModules/ReJSON && cd ReJSON && make && cd ..
+  # Install requirements
+  - pip install -r requirements.txt
+  # Install rejson-py to test rejson-py
+  - pip install -e .
+
+before_script:
+  - ./redis/src/redis-server --loadmodule rejson/src/rejson.so &
+
+script:
+  - cd test
+  - python -munittest discover
+

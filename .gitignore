@@ -2,6 +2,7 @@
 !/**/
 !.gitignore
 !requirements.txt
+!.travis.yml
 !**/*.py
 !**/*.md
 
