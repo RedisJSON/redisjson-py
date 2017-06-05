@@ -72,7 +72,7 @@ The client can be set to use custom encoders/decoders at creation, or by calling
 explicitly the `setEncoder()`_ and
 `setDecoder()`_ methods, respectively.
 
-.. _json: https://docs.python.org/2/library/json.html.
+.. _json: https://docs.python.org/2/library/json.html
 .. _`setDecoder()`:API.md#setdecoder
 .. _`setEncoder()`:API.md#setencoder
 
