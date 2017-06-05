@@ -69,12 +69,12 @@ Encoding/Decoding
 
 rejson-py uses Python's json_.
 The client can be set to use custom encoders/decoders at creation, or by calling
-explicitly the `setEncoder()`_ and
-`setDecoder()`_ methods, respectively.
+explicitly the setEncoder_ () and
+setDecoder_ () methods, respectively.
 
 .. _json: https://docs.python.org/2/library/json.html
-.. _`setDecoder()`:API.md#setdecoder
-.. _`setEncoder()`:API.md#setencoder
+.. _setDecoder: ./API.md#setdecoder
+.. _setEncoder: ./API.md#setencoder
 
 The following shows how to use this for a custom class that's stored as
 a JSON string for example:
