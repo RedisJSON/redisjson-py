@@ -12,27 +12,6 @@ def str_path(p):
     else:
         return p
 
-def float_or_long(n):
-    "Return a number from a Redis reply"
-    if isinstance(n, six.string_types):
-        return float(n)
-    else:
-        return long(n)
-
-def long_or_none(r):
-    "Return a long or None from a Redis reply"
-    if r:
-        return long(r)
-    return r
-
-def json_or_none(d):
-    "Return a deserialized JSON object or None"
-    def _f(r):
-        if r:
-            return d(r)
-        return r
-    return _f
-
 def bulk_of_jsons(d):
     "Replace serialized JSON values with objects in a bulk array response (list)"
     def _f(b):
@@ -75,20 +54,20 @@ class Client(StrictRedis):
         # Set the module commands' callbacks
         MODULE_CALLBACKS = {
                 'JSON.DEL': long,
-                'JSON.GET': json_or_none(self._decode),
+                'JSON.GET': self._decode,
                 'JSON.MGET': bulk_of_jsons(self._decode),
                 'JSON.SET': lambda r: r and nativestr(r) == 'OK',
-                'JSON.NUMINCRBY': float_or_long,
-                'JSON.NUMMULTBY': float_or_long,
-                'JSON.STRAPPEND': long_or_none,
-                'JSON.STRLEN': long_or_none,
-                'JSON.ARRAPPEND': long_or_none,
-                'JSON.ARRINDEX': long_or_none,
-                'JSON.ARRINSERT': long_or_none,
-                'JSON.ARRLEN': long_or_none,
-                'JSON.ARRPOP': json_or_none(self._decode),
-                'JSON.ARRTRIM': long_or_none,
-                'JSON.OBJLEN': long_or_none,
+                'JSON.NUMINCRBY': self._decode,
+                'JSON.NUMMULTBY': self._decode,
+                'JSON.STRAPPEND': long,
+                'JSON.STRLEN': long,
+                'JSON.ARRAPPEND': long,
+                'JSON.ARRINDEX': long,
+                'JSON.ARRINSERT': long,
+                'JSON.ARRLEN': long,
+                'JSON.ARRPOP': self._decode,
+                'JSON.ARRTRIM': long,
+                'JSON.OBJLEN': long,
         }
         for k, v in six.iteritems(MODULE_CALLBACKS):
             self.set_response_callback(k, v)

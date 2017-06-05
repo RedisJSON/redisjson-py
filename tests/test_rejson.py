@@ -24,6 +24,24 @@ class ReJSONTestCase(TestCase):
         self.assertEqual(1, rj.jsondel('foo'))
         self.assertFalse(rj.exists('foo'))
 
+    def testJSONSetExistentialModifiersShouldSucceed(self):
+        "Test JSONSet's NX/XX flags"
+
+        obj = { 'foo': 'bar' }
+        self.assertTrue(rj.jsonset('obj', Path.rootPath(), obj))
+
+        # Test that flags prevent updates when conditions are unmet
+        self.assertFalse(rj.jsonset('obj', Path('foo'), 'baz', nx=True))
+        self.assertFalse(rj.jsonset('obj', Path('qaz'), 'baz', xx=True))
+
+        # Test that flags allow updates when conditions are met
+        self.assertTrue(rj.jsonset('obj', Path('foo'), 'baz', xx=True))
+        self.assertTrue(rj.jsonset('obj', Path('qaz'), 'baz', nx=True))
+
+        # Test that flags are mutually exlusive
+        with self.assertRaises(Exception) as context:
+            rj.jsonset('obj', Path('foo'), 'baz', nx=True, xx=True)
+
     def testMGetShouldSucceed(self):
         "Test JSONMGet"
 
