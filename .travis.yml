@@ -6,10 +6,6 @@ python:
   - 3.5
   - 3.6
 
-matrix:
-  allow_failures:
-    - python: 3.5
-
 install:
   # Get Redis
   - git clone --depth=1 https://github.com/antirez/redis.git && cd redis && make && cd ..
