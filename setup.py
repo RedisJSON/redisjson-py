@@ -51,7 +51,7 @@ setup(name='rejson',
             'Programming Language :: Python :: 3.5',
             'Programming Language :: Python :: 3.6',
       ],  # Get from http://pypi.python.org/pypi?%3Aaction=list_classifiers
-      keywords='YAML parser configuration',
+      keywords='Redis JSON Extension',
       author='RedisLabs',
       author_email='oss@redislabs.com',
       url='http://github.com/RedisLabs/rejson-py',
