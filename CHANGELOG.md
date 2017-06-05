@@ -1,5 +1,11 @@
 # rejson-py changelog
 
+## 0.2.1 20170605
+
+Recovery release
+
+* Adds missing manifest
+
 ## 0.2 20170605
 
 Codename "_[@hootnot](https://github.com/hootnot)_"
