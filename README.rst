@@ -4,6 +4,9 @@ ReJSON Python Client
 .. image:: https://travis-ci.org/RedisLabs/rejson-py.svg?branch=master
     :target: https://travis-ci.org/RedisLabs/rejson-py
 
+.. image:: https://coveralls.io/repos/github/RedisLabs/rejson-py/badge.svg?branch=master
+    :target: https://coveralls.io/github/RedisLabs/rejson-py?branch=master
+
 .. image:: https://img.shields.io/pypi/pyversions/rejson.svg
     :target: https://github.com/RedisLabs/rejson-py
 
@@ -146,9 +149,9 @@ vocabulary and a couple of helper methods. These are documented in the
    $ python gendoc rejson > API.md
 
 
-For complete documentation about ReJSON's commands, refer to rejson_.
+For complete documentation about ReJSON's commands, refer to `ReJSON's website`_.
 
-.. _`rejson`: http://rejson.io
+.. _`ReJSON's website`: http://rejson.io
 
 License
 -------
