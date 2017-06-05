@@ -1,11 +1,10 @@
 language: python
 python:
   - 2.7
+  - 3.3
+  - 3.4
   - 3.5
-
-matrix:
-  allow_failures:
-    - python: 3.5
+  - 3.6
 
 install:
   # Get Redis
@@ -14,13 +13,14 @@ install:
   - git clone --depth=1 https://github.com/RedisLabsModules/ReJSON.git && cd ReJSON && make && cd ..
   # Install requirements
   - pip install -r requirements.txt
+  - pip install coveralls
+  - pip install wheel
+  - pip install twine
   # Install rejson-py to test rejson-py
-  - pip install -e .
+  # - pip install -e .
 
 before_script:
   - ./redis/src/redis-server --loadmodule ReJSON/src/rejson.so &
 
 script:
-  - cd test
-  - python -munittest discover
-
+  - coverage run --source=rejson setup.py test
