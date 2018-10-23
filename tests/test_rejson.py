@@ -47,9 +47,12 @@ class ReJSONTestCase(TestCase):
 
         rj.jsonset('1', Path.rootPath(), 1)
         rj.jsonset('2', None, 2)
-        r = rj.jsonmget('1', '2')
+        r1 = rj.jsonmget(None, '1', '2')
+        r2 = rj.jsonmget(keys=['1', '2'])
         e = [1, 2]
-        self.assertListEqual(e, r)
+        self.assertListEqual(e, r1)
+        self.assertListEqual(e, r2)
+        
 
     def testTypeShouldSucceed(self):
         "Test JSONType"
@@ -123,7 +126,7 @@ class ReJSONTestCase(TestCase):
 
         rj.jsonset('arr', Path.rootPath(), [0, 1, 2, 3, 4])
         self.assertEqual(4, rj.jsonarrpop('arr', Path.rootPath(), 4))
-        self.assertEqual(3, rj.jsonarrpop('arr', None, -1))
+        self.assertEqual(3, rj.jsonarrpop('arr', index=-1))
         self.assertEqual(2, rj.jsonarrpop('arr', Path.rootPath()))
         self.assertEqual(0, rj.jsonarrpop('arr', Path.rootPath(), 0))
         self.assertListEqual([1], rj.jsonget('arr'))
