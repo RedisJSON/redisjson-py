@@ -130,6 +130,8 @@ class Client(StrictRedis):
         ``xx`` if set to True, set ``value`` only if it exists
         """
         pieces = [name, str_path(path), self._encode(obj)]
+        if not path:
+            path=Path.rootPath()
 
         # Handle existential modifiers
         if nx and xx:
