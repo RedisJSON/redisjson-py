@@ -48,7 +48,7 @@ class ReJSONTestCase(TestCase):
         rj.jsonset('1', Path.rootPath(), 1)
         rj.jsonset('2', None, 2)
         r1 = rj.jsonmget(None, '1', '2')
-        r2 = rj.jsonmget(keys=['1', '2'])
+        r2 = rj.jsonmgetl(keys=['1', '2'])
         e = [1, 2]
         self.assertListEqual(e, r1)
         self.assertListEqual(e, r2)
