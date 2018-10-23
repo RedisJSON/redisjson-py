@@ -78,7 +78,7 @@ class ReJSONTestCase(TestCase):
 
         rj.jsonset('str', Path.rootPath(), 'foo')
         self.assertEqual(6, rj.jsonstrappend('str', 'bar', Path.rootPath()))
-        self.assertEqual(6, rj.jsonstrappend('str', 'baz'))
+        self.assertEqual(9, rj.jsonstrappend('str', 'baz'))
         self.assertEqual('foobarbaz', rj.jsonget('str', Path.rootPath()))
 
     def testStrLenShouldSucceed(self):
