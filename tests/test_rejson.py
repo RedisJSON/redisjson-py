@@ -116,7 +116,7 @@ class ReJSONTestCase(TestCase):
 
         rj.jsonset('arr', Path.rootPath(), [0, 1, 2, 3, 4])
         self.assertEqual(5, rj.jsonarrlen('arr', Path.rootPath()))
-        self.assertEqual(5, rj.jsonarrlen('arr', None))
+        self.assertEqual(5, rj.jsonarrlen('arr'))
 
     def testArrPopShouldSucceed(self):
         "Test JSONSArrPop"
