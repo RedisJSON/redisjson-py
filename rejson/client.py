@@ -113,16 +113,25 @@ class Client(StrictRedis):
                     pieces.append(str_path(p))
         return self.execute_command('JSON.GET', *pieces)
 
-    def jsonmget(self, path=Path.rootPath(), *args):
+    def jsonmget(self, path, *args):
         """
         Gets the objects stored as a JSON values under ``path`` from 
         keys ``args``
         """
         pieces = []
         pieces.extend(args)
+        if not path:
+            path=Path.rootPath()
         pieces.append(str_path(path))
         return self.execute_command('JSON.MGET', *pieces)
 
+    def jsonmgetl(self, keys=[], path=Path.rootPath()):
+        """
+        Gets the objects stored as a JSON values under ``path`` from 
+        key list ``keys``
+        """
+        return self.jsonmget(path, *keys)
+    
     def jsonset(self, name, path, obj, nx=False, xx=False):
         """
         Set the JSON value at key ``name`` under the ``path`` to ``obj``
