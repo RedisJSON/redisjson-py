@@ -190,11 +190,13 @@ class Client(StrictRedis):
         """
         return self.execute_command('JSON.STRLEN', name, str_path(path))
 
-    def jsonarrappend(self, name, path=Path.rootPath(), *args):
+    def jsonarrappend(self, name, path, *args):
         """
         Appends the objects ``args`` to the array under the ``path` in key
         ``name``
         """
+        if not path:
+            path=Path.rootPath()
         pieces = [name, str_path(path)]
         for o in args:
             pieces.append(self._encode(o))
