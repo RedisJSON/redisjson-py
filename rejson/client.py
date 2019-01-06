@@ -1,7 +1,7 @@
 import six
 import json
 from redis import StrictRedis
-from redis.client import BasePipeline
+from redis.client import Pipeline
 from redis._compat import (long, nativestr)
 from .path import Path
 
@@ -257,5 +257,5 @@ class Client(StrictRedis):
         p.setDecoder(self._decoder)
         return p
 
-class Pipeline(BasePipeline, Client):
+class Pipeline(Pipeline, Client):
     "Pipeline for ReJSONClient"
