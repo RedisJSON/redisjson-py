@@ -1,5 +1,9 @@
 # rejson-py changelog
 
+## 0.3.0 20190107
+
+*upgrade dependency to redis-py >=3.0.0
+
 ## 0.2.1 20170605
 
 Recovery release
