@@ -9,6 +9,9 @@ ReJSON Python Client
 
 .. image:: https://img.shields.io/pypi/pyversions/rejson.svg
     :target: https://github.com/RedisLabs/rejson-py
+    
+.. image:: https://img.shields.io/github/release/RedisLabs/rejson-py.svg
+    :target: https://github.com/RedisLabs/rejson-py/releases/latest
 
 rejson-py is a package that allows storing, updating and querying objects as
 JSON documents in a `Redis`_ database that is extended with the
