@@ -21,6 +21,7 @@ class ReJSONTestCase(TestCase):
 
         self.assertTrue(rj.jsonset('foo', Path.rootPath(), 'bar'))
         self.assertEqual('bar', rj.jsonget('foo'))
+        self.assertEqual(None, rj.jsonget('baz'))
         self.assertEqual(1, rj.jsondel('foo'))
         self.assertFalse(rj.exists('foo'))
 
