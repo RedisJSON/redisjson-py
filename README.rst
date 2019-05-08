@@ -44,7 +44,7 @@ Usage example
 
    from rejson import Client, Path
 
-   rj = Client(host='localhost', port=6379)
+   rj = Client(host='localhost', port=6379, decode_responses=True)
 
    # Set the key `obj` to some object
    obj = {
