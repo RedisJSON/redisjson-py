@@ -5,7 +5,7 @@ RedisJSON Python Client
     :target: https://github.com/RedisJSON/RedisJSON-py-go
 
 .. image:: https://travis-ci.org/RedisLabs/rejson-py.svg?branch=master
-    :target: https://travis-ci.org/RedisJSON/redisjson-py
+    :target: https://travis-ci.org/RedisLabs/rejson-py
 
 .. image:: https://badge.fury.io/py/rejson.svg
     :target: https://badge.fury.io/py/rejson
