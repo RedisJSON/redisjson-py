@@ -1,20 +1,20 @@
-ReJSON Python Client
+RedisJSON Python Client
 ====================
 
-.. image:: https://img.shields.io/github/license/RediSearch/redisearch-py.svg
-    :target: https://github.com/RediSearch/redisearch-py-go
+.. image:: https://img.shields.io/github/license/RedisJSON/RedisJSON-py.svg
+    :target: https://github.com/RedisJSON/RedisJSON-py-go
 
 .. image:: https://travis-ci.org/RedisLabs/rejson-py.svg?branch=master
-    :target: https://travis-ci.org/RedisLabs/rejson-py
+    :target: https://travis-ci.org/RedisJSON/redisjson-py
 
 .. image:: https://badge.fury.io/py/rejson.svg
     :target: https://badge.fury.io/py/rejson
 
 .. image:: https://img.shields.io/pypi/pyversions/rejson.svg
-    :target: https://github.com/RedisLabs/rejson-py
+    :target: https://github.com/RedisJSON/redisjson-py
     
-.. image:: https://img.shields.io/github/release/RedisLabs/rejson-py.svg
-    :target: https://github.com/RedisLabs/rejson-py/releases/latest
+.. image:: https://img.shields.io/github/release/RedisJSON/redisjson-py.svg
+    :target: https://github.com/RedisJSON/redisjson-py/releases/latest
 
 .. image:: https://coveralls.io/repos/github/RedisLabs/rejson-py/badge.svg?branch=master
     :target: https://coveralls.io/github/RedisLabs/rejson-py?branch=master
