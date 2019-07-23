@@ -103,14 +103,19 @@ class Client(StrictRedis):
         """
         return self.execute_command('JSON.DEL', name, str_path(path))
 
-    def jsonget(self, name, *args):
+    def jsonget(self, name, *args, no_escape=False):
         """
         Get the object stored as a JSON value at key ``name``
         ``args`` is zero or more paths, and defaults to root path
+        ```no_escape`` is a boolean flag to add no_escape option to get non-ascii characters
         """
         pieces = [name]
+        if no_escape:
+            pieces.append('noescape')
+
         if len(args) == 0:
             pieces.append(Path.rootPath())
+
         else:
             for p in args:
                     pieces.append(str_path(p))
