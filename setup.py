@@ -36,6 +36,7 @@ setup(name='rejson',
       version=version,
       description='ReJSON Python Client',
       long_description=read_all("README.rst"),
+      long_description_content_type='text/markdown',
       classifiers=[
             'Programming Language :: Python',
             'License :: OSI Approved :: BSD License',
