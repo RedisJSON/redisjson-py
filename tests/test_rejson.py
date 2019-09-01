@@ -4,7 +4,6 @@ import unittest
 from unittest import TestCase
 from rejson import Client, Path
 
-
 rj = None
 port = 6379
 
@@ -24,6 +23,15 @@ class ReJSONTestCase(TestCase):
         self.assertEqual(None, rj.jsonget('baz'))
         self.assertEqual(1, rj.jsondel('foo'))
         self.assertFalse(rj.exists('foo'))
+
+    def testJSONSetGetDelNonAsciiShouldSucceed(self):
+        "Test non-ascii JSONSet/Get/Del"
+
+        self.assertTrue(rj.jsonset('notascii', Path.rootPath(), 'hyvää-élève'))
+        self.assertNotEqual('hyvää-élève', rj.jsonget('notascii'))
+        self.assertEqual('hyvää-élève', rj.jsonget('notascii', no_escape=True))
+        self.assertEqual(1, rj.jsondel('notascii'))
+        self.assertFalse(rj.exists('notascii'))
 
     def testJSONSetExistentialModifiersShouldSucceed(self):
         "Test JSONSet's NX/XX flags"

@@ -47,6 +47,14 @@ jp = rj.pipeline()
 jp.set('foo', 'bar')
 jp.jsonset('baz', Path.rootPath(), 'qaz')
 jp.execute()
+
+# If you use non-ascii character in your JSON data, you can add the no_escape flag to JSON.GET command
+obj_non_ascii = {
+    'non_ascii_string': 'hyvää'
+    }
+
+rj.jsonset('non-ascii', Path.rootPath(), obj_non_ascii)
+print '{} is a non-ascii string'.format(rj.jsonget('non-ascii', Path('.non_ascii_string'), no_escape=True))
 ```
 
 ## Encoding/Decoding
