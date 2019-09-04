@@ -2,10 +2,10 @@ RedisJSON Python Client
 ====================
 
 .. image:: https://img.shields.io/github/license/RedisJSON/RedisJSON-py.svg
-    :target: https://github.com/RedisJSON/RedisJSON-py-go
-
-.. image:: https://travis-ci.org/RedisLabs/rejson-py.svg?branch=master
-    :target: https://travis-ci.org/RedisLabs/rejson-py
+    :target: https://github.com/RedisJSON/redisjson-py/blob/master/LICENSE
+    
+.. image:: https://circleci.com/gh/RedisGraph/redisgraph-py/tree/master.svg?style=svg
+    :target: https://circleci.com/gh/RedisGraph/redisgraph-py/tree/master
 
 .. image:: https://badge.fury.io/py/rejson.svg
     :target: https://badge.fury.io/py/rejson
