@@ -40,7 +40,7 @@ jobs:
           name: run tests
           command: |
             . venv/bin/activate
-            coverage run tests/test_rejson.py
+            coverage run ./tests/test_rejson.py
             codecov 
         
    #   - store_artifacts:
