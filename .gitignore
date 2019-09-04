@@ -5,6 +5,7 @@
 !.travis.yml
 !**/*.py
 !**/*.md
+!.circleci/**
 
 .env
 .vscode
