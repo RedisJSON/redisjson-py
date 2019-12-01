@@ -1,19 +1,18 @@
 #!/usr/bin/env python
 
 from setuptools import setup, find_packages
+import io
 import os
 import sys
 import re
 import shutil
 
-
 def get_version(package):
     """
     Return package version as listed in `__version__` in `init.py`.
     """
-    init_py = open(os.path.join(package, '__init__.py')).read()
+    init_py = io.open(os.path.join(package, '__init__.py'), encoding='utf-8').read()
     return re.search("__version__ = ['\"]([^'\"]+)['\"]", init_py).group(1)
-
 
 def read_all(f):
     with open(f) as I:
