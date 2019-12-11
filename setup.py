@@ -15,7 +15,7 @@ def get_version(package):
     return re.search("__version__ = ['\"]([^'\"]+)['\"]", init_py).group(1)
 
 def read_all(f):
-    with open(f) as I:
+    with io.open(f, encoding="utf-8") as I:
         return I.read()
 
 requirements = map(str.strip, open("requirements.txt").readlines())
