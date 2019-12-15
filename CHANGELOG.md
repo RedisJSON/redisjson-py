@@ -1,5 +1,9 @@
 # rejson-py changelog
 
+## 0.5.2 20191212
+
+* #30 Use io.open() and 'utf-8' to read description
+
 ## 0.5.1 20191129
 
 * #29 Use io.open() and 'utf-8' encoding to read version

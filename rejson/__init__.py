@@ -120,6 +120,6 @@ rj.jsonset('custom', Path.rootPath(), obj))
 obj = rj.jsonget('custom', Path.rootPath())
 ```
 """
-__version__ = "0.5.1"
+__version__ = "0.5.2"
 from .client import Client
 from .path import Path
