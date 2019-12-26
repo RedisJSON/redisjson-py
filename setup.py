@@ -34,7 +34,7 @@ if sys.argv[-1] == 'publish':
 setup(name='rejson',
       version=version,
       description='ReJSON Python Client',
-      long_description=read_all("README.rst"),
+      long_description=read_all("README.md"),
       long_description_content_type='text/markdown',
       classifiers=[
             'Programming Language :: Python',
