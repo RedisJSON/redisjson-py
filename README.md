@@ -69,7 +69,7 @@ $ pip install rejson
 
 ## Encoding/Decoding
 
-rejson-py uses Python's (json)[https://docs.python.org/2/library/json.html].
+rejson-py uses Python's [json](https://docs.python.org/2/library/json.html).
 The client can be set to use custom encoders/decoders at creation, or by calling
 explicitly the [setEncoder()](./API.md#setencoder) and
 [setDecoder()](./API.md#setencoder) methods, respectively.
