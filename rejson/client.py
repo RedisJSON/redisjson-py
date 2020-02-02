@@ -33,11 +33,6 @@ class Client(StrictRedis):
     to/from JSON, and provides the ability to use a custom encoder/decoder.
     """
 
-    MODULE_INFO = {
-        'name': 'ReJSON',
-        'ver':  1
-    }
-
     _encoder = None
     _encode = None
     _decoder = None
