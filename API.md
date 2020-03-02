@@ -252,6 +252,19 @@ Gets the objects stored as a JSON values under ``path`` from
 keys ``args``
 
 
+### jsonmgetl
+```py
+
+def jsonmgetl(self, keys=[], path=Path.rootPath())
+
+```
+
+
+
+Gets the objects stored as a JSON values under ``path`` from 
+key list ``keys``
+
+
 ### jsonnumincrby
 ```py
 

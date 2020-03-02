@@ -55,10 +55,13 @@ class ReJSONTestCase(TestCase):
         "Test JSONMGet"
 
         rj.jsonset('1', Path.rootPath(), 1)
-        rj.jsonset('2', Path.rootPath(), 2)
-        r = rj.jsonmget(Path.rootPath(), '1', '2')
+        rj.jsonset('2', None, 2)
+        r1 = rj.jsonmget(None, '1', '2')
+        r2 = rj.jsonmgetl(keys=['1', '2'])
         e = [1, 2]
-        self.assertListEqual(e, r)
+        self.assertListEqual(e, r1)
+        self.assertListEqual(e, r2)
+        
 
     def testTypeShouldSucceed(self):
         "Test JSONType"
@@ -71,7 +74,7 @@ class ReJSONTestCase(TestCase):
 
         rj.jsonset('num', Path.rootPath(), 1)
         self.assertEqual(2, rj.jsonnumincrby('num', Path.rootPath(), 1))
-        self.assertEqual(2.5, rj.jsonnumincrby('num', Path.rootPath(), 0.5))
+        self.assertEqual(2.5, rj.jsonnumincrby('num', None, 0.5))
         self.assertEqual(1.25, rj.jsonnumincrby('num', Path.rootPath(), -1.25))
 
     def testNumMultByShouldSucceed(self):
@@ -79,7 +82,7 @@ class ReJSONTestCase(TestCase):
 
         rj.jsonset('num', Path.rootPath(), 1)
         self.assertEqual(2, rj.jsonnummultby('num', Path.rootPath(), 2))
-        self.assertEqual(5, rj.jsonnummultby('num', Path.rootPath(), 2.5))
+        self.assertEqual(5, rj.jsonnummultby('num', None, 2.5))
         self.assertEqual(2.5, rj.jsonnummultby('num', Path.rootPath(), 0.5))
 
     def testStrAppendShouldSucceed(self):
@@ -87,7 +90,8 @@ class ReJSONTestCase(TestCase):
 
         rj.jsonset('str', Path.rootPath(), 'foo')
         self.assertEqual(6, rj.jsonstrappend('str', 'bar', Path.rootPath()))
-        self.assertEqual('foobar', rj.jsonget('str', Path.rootPath()))
+        self.assertEqual(9, rj.jsonstrappend('str', 'baz'))
+        self.assertEqual('foobarbaz', rj.jsonget('str', Path.rootPath()))
 
     def testStrLenShouldSucceed(self):
         "Test JSONStrLen"
@@ -95,27 +99,28 @@ class ReJSONTestCase(TestCase):
         rj.jsonset('str', Path.rootPath(), 'foo')
         self.assertEqual(3, rj.jsonstrlen('str', Path.rootPath()))
         rj.jsonstrappend('str', 'bar', Path.rootPath())
-        self.assertEqual(6, rj.jsonstrlen('str', Path.rootPath()))
+        self.assertEqual(6, rj.jsonstrlen('str'))
 
     def testArrAppendShouldSucceed(self):
         "Test JSONSArrAppend"
 
         rj.jsonset('arr', Path.rootPath(), [1])
         self.assertEqual(2, rj.jsonarrappend('arr', Path.rootPath(), 2))
+        self.assertEqual(3, rj.jsonarrappend('arr', None, 3))
 
     def testArrIndexShouldSucceed(self):
         "Test JSONSArrIndex"
 
         rj.jsonset('arr', Path.rootPath(), [0, 1, 2, 3, 4])
         self.assertEqual(1, rj.jsonarrindex('arr', Path.rootPath(), 1))
-        self.assertEqual(-1, rj.jsonarrindex('arr', Path.rootPath(), 1, 2))
+        self.assertEqual(-1, rj.jsonarrindex('arr', None, 1, 2))
 
     def testArrInsertShouldSucceed(self):
         "Test JSONSArrInsert"
 
         rj.jsonset('arr', Path.rootPath(), [0, 4])
         self.assertEqual(5, rj.jsonarrinsert('arr',
-                                             Path.rootPath(), 1, *[1, 2, 3, ]))
+                                             None, 1, *[1, 2, 3, ]))
         self.assertListEqual([0, 1, 2, 3, 4], rj.jsonget('arr'))
 
     def testArrLenShouldSucceed(self):
@@ -123,13 +128,14 @@ class ReJSONTestCase(TestCase):
 
         rj.jsonset('arr', Path.rootPath(), [0, 1, 2, 3, 4])
         self.assertEqual(5, rj.jsonarrlen('arr', Path.rootPath()))
+        self.assertEqual(5, rj.jsonarrlen('arr'))
 
     def testArrPopShouldSucceed(self):
         "Test JSONSArrPop"
 
         rj.jsonset('arr', Path.rootPath(), [0, 1, 2, 3, 4])
         self.assertEqual(4, rj.jsonarrpop('arr', Path.rootPath(), 4))
-        self.assertEqual(3, rj.jsonarrpop('arr', Path.rootPath(), -1))
+        self.assertEqual(3, rj.jsonarrpop('arr', index=-1))
         self.assertEqual(2, rj.jsonarrpop('arr', Path.rootPath()))
         self.assertEqual(0, rj.jsonarrpop('arr', Path.rootPath(), 0))
         self.assertListEqual([1], rj.jsonget('arr'))
@@ -138,7 +144,7 @@ class ReJSONTestCase(TestCase):
         "Test JSONSArrPop"
 
         rj.jsonset('arr', Path.rootPath(), [0, 1, 2, 3, 4])
-        self.assertEqual(3, rj.jsonarrtrim('arr', Path.rootPath(), 1, 3))
+        self.assertEqual(3, rj.jsonarrtrim('arr', None, 1, 3))
         self.assertListEqual([1, 2, 3], rj.jsonget('arr'))
 
     def testObjKeysShouldSucceed(self):
@@ -146,18 +152,20 @@ class ReJSONTestCase(TestCase):
 
         obj = {'foo': 'bar', 'baz': 'qaz'}
         rj.jsonset('obj', Path.rootPath(), obj)
-        keys = rj.jsonobjkeys('obj', Path.rootPath())
+        keys = rj.jsonobjkeys('obj')
         keys.sort()
         exp = [k for k in six.iterkeys(obj)]
         exp.sort()
         self.assertListEqual(exp, keys)
+        # TODO: maybe add a test for subobjects here
 
     def testObjLenShouldSucceed(self):
         "Test JSONSObjLen"
 
         obj = {'foo': 'bar', 'baz': 'qaz'}
         rj.jsonset('obj', Path.rootPath(), obj)
-        self.assertEqual(len(obj), rj.jsonobjlen('obj', Path.rootPath()))
+        self.assertEqual(len(obj), rj.jsonobjlen('obj'))
+        # TODO: maybe add a test for subobjects here
 
     def testPipelineShouldSucceed(self):
         "Test pipeline"
