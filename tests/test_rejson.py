@@ -102,6 +102,8 @@ class ReJSONTestCase(TestCase):
 
         rj.jsonset('arr', Path.rootPath(), [1])
         self.assertEqual(2, rj.jsonarrappend('arr', Path.rootPath(), 2))
+        self.assertEqual(4, rj.jsonarrappend('arr', Path.rootPath(), 3, 4))
+        self.assertEqual(7, rj.jsonarrappend('arr', Path.rootPath(), *[5, 6, 7]))
 
     def testArrIndexShouldSucceed(self):
         "Test JSONSArrIndex"
