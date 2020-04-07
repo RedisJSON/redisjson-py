@@ -44,6 +44,15 @@ class Client(StrictRedis):
 
         ``encoder`` should be an instance of a ``json.JSONEncoder`` class
         ``decoder`` should be an instance of a ``json.JSONDecoder`` class
+
+        IMPORTANT: With Python 3 the redis-py client defaults to returning bytes
+        instead of string replies. To overcome this, make sure that you
+        initialize the class with its ``decode_responses`` argument set to
+        ``True``, e.g.:
+
+        ```
+        rj = Client(host='localhost', port=6379, decode_responses=True)
+        ```
         """
         self.setEncoder(encoder)
         self.setDecoder(decoder)
@@ -69,7 +78,7 @@ class Client(StrictRedis):
         }
         for k, v in six.iteritems(MODULE_CALLBACKS):
             self.set_response_callback(k, v)
-                                    
+
     def setEncoder(self, encoder):
         """
         Sets the client's encoder
@@ -124,7 +133,7 @@ class Client(StrictRedis):
 
     def jsonmget(self, path, *args):
         """
-        Gets the objects stored as a JSON values under ``path`` from 
+        Gets the objects stored as a JSON values under ``path`` from
         keys ``args``
         """
         pieces = []
@@ -228,7 +237,7 @@ class Client(StrictRedis):
 
     def jsonarrtrim(self, name, path, start, stop):
         """
-        Trim the array JSON value under ``path`` at key ``name`` to the 
+        Trim the array JSON value under ``path`` at key ``name`` to the
         inclusive range given by ``start`` and ``stop``
         """
         return self.execute_command('JSON.ARRTRIM', name, str_path(path), start, stop)
