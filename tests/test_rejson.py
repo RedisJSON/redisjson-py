@@ -28,7 +28,7 @@ class ReJSONTestCase(TestCase):
         "Test non-ascii JSONSet/Get/Del"
 
         self.assertTrue(rj.jsonset('notascii', Path.rootPath(), 'hyvää-élève'))
-        self.assertNotEqual('hyvää-élève', rj.jsonget('notascii'))
+        self.assertEqual('hyvää-élève', rj.jsonget('notascii'))
         self.assertEqual('hyvää-élève', rj.jsonget('notascii', no_escape=True))
         self.assertEqual(1, rj.jsondel('notascii'))
         self.assertFalse(rj.exists('notascii'))
