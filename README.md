@@ -9,7 +9,7 @@
 
 [![Forum](https://img.shields.io/badge/Forum-RedisJSON-blue)](https://forum.redislabs.com/c/modules/redisjson)
 [![Gitter](https://badges.gitter.im/RedisLabs/RedisJSON.svg)](https://gitter.im/RedisLabs/RedisJSON?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
-    
+
 rejson-py is a package that allows storing, updating and querying objects as
 JSON documents in a [Redis](https://redis.io) database that is extended with the
 [ReJSON module](https://github.com/redislabsmodules/rejson). The package extends
@@ -65,6 +65,18 @@ $ pip install rejson
    }
    rj.jsonset('non-ascii', Path.rootPath(), obj_non_ascii)
    print '{} is a non-ascii string'.format(rj.jsonget('non-ascii', Path('.non_ascii_string'), no_escape=True))
+```
+
+## Python 2 vs. 3
+
+The following is an excerpt from [redis-py's README "Getting Started" section](https://github.com/andymccurdy/redis-py/blob/master/README.rst#getting-started):
+
+> By default, all responses are returned as bytes in Python 3 and str in Python 2. The user is responsible for decoding to Python 3 strings or Python 2 unicode objects.
+
+Because of that, when using this client with Python 3, you initialize it with the base class's `decode_responses` argument set to `True`, e.g.:
+
+```py
+rj = Client(host='localhost', port=6379, decode_responses=True)
 ```
 
 ## Encoding/Decoding
