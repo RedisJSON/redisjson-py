@@ -15,7 +15,7 @@ class ReJSONTestCase(TestCase):
     def _create_client(self, *args, **kwargs):
         if REDIS_CLUSTER_HOST is None or \
            REDIS_CLUSTER_PORT is None:
-            return Client(port=port, decode_responses=True)
+            return Client(*args, **kwargs)
         else:
             from rediscluster import RedisCluster
             startup_nodes = [{"host": REDIS_CLUSTER_HOST,
@@ -26,7 +26,7 @@ class ReJSONTestCase(TestCase):
 
     def setUp(self):
         global rj
-        rj = self._create_client()
+        rj = self._create_client(port=port, decode_responses=True)
         rj.flushdb()
 
 
