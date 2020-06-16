@@ -1,3 +1,5 @@
+import os
+import sys
 import six
 import json
 import unittest
@@ -6,14 +8,27 @@ from rejson import Client, Path
 
 rj = None
 port = 6379
+cluster_port = 6379
 
 
 class ReJSONTestCase(TestCase):
 
+    REDIS_CLUSTER_HOST = None
+    REDIS_CLUSTER_PORT = None
+
     def setUp(self):
         global rj
-        rj = Client(port=port, decode_responses=True)
-        rj.flushdb()
+        if ReJSONTestCase.REDIS_CLUSTER_HOST is None or \
+           ReJSONTestCase.REDIS_CLUSTER_PORT is None:
+            rj = Client(port=port, decode_responses=True)
+            rj.flushdb()
+        else:
+            from rediscluster import RedisCluster
+            startup_nodes = [{"host": ReJSONTestCase.REDIS_CLUSTER_HOST,
+                              "port": ReJSONTestCase.REDIS_CLUSTER_PORT}]
+            conn = RedisCluster(startup_nodes=startup_nodes, decode_raspenses=True)
+            rj = Client(client=conn)
+            rj.flushdb()
 
     def testJSONSetGetDelShouldSucceed(self):
         "Test basic JSONSet/Get/Del"
@@ -260,4 +275,7 @@ class ReJSONTestCase(TestCase):
 
 
 if __name__ == '__main__':
+    if len(sys.argv) > 1:
+        ReJSONTestCase.REDIS_CLUSTER_HOST = sys.argv.pop()
+        ReJSONTestCase.REDIS_CLUSTER_PORT = sys.argv.pop()
     unittest.main()
