@@ -1,6 +1,7 @@
 import six
 import json
 from redis import StrictRedis
+import redis.client as rc
 from redis.client import Pipeline
 from redis._compat import (long, nativestr)
 from .path import Path
@@ -37,6 +38,7 @@ class Client():
     _encode = None
     _decoder = None
     _decode = None
+    _client = None
 
     def __init__(self, client=None, encoder=None, decoder=None, *args, **kwargs):
         """
@@ -48,8 +50,9 @@ class Client():
         self.setEncoder(encoder)
         self.setDecoder(decoder)
         if client is None:
-            client = StrictRedis(*args, **kwargs)
-        self.client = client
+            self.setClient(StrictRedis(*args, **kwargs))
+        else:
+            self.setClient(client)
 
         # Set the module commands' callbacks
         MODULE_CALLBACKS = {
@@ -71,6 +74,42 @@ class Client():
         }
         for k, v in six.iteritems(MODULE_CALLBACKS):
             self.client.set_response_callback(k, v)
+
+    #######################################################################
+    # TODO - see if this pass-through stuff can be simplified
+    @property
+    def client(self):
+        return self._client
+
+    def exists(self, *args, **kwargs):
+        return self.client.exists(*args, **kwargs)
+
+    def get(self, *args, **kwargs):
+        return self.client.get(*args, **kwargs)
+
+    @property
+    def connection_pool(self):
+        return self.client.connection_pool
+
+    @connection_pool.setter
+    def connection_pool(self, new_value):
+        self.client.connection_pool = new_value
+
+    @property
+    def response_callbacks(self):
+        return self.client.response_callbacks
+
+    @response_callbacks.setter
+    def response_callbacks(self, new_value):
+        self.client.response_callbacks = new_value
+
+    def flushdb(self):
+        self.client.flushdb()
+
+    #######################################################################
+
+    def setClient(self, client):
+        self._client = client
 
     def setEncoder(self, encoder):
         """
@@ -260,6 +299,7 @@ class Client():
         Overridden in order to provide the right client through the pipeline.
         """
         p = Pipeline(
+            client=self.client,
             connection_pool=self.connection_pool,
             response_callbacks=self.response_callbacks,
             transaction=transaction,
@@ -268,5 +308,10 @@ class Client():
         p.setDecoder(self._decoder)
         return p
 
+
 class Pipeline(Pipeline, Client):
     "Pipeline for ReJSONClient"
+
+    def __init__(self, client=None, *args, **kwargs):
+        Client.__init__(self, client=client)
+        rc.Pipeline.__init__(self, *args, **kwargs)
