@@ -6,6 +6,7 @@
 !**/*.py
 !**/*.md
 !.circleci/**
+!.github/**
 
 .env
 .vscode
