@@ -98,7 +98,7 @@ class Client(StrictRedis):
         """
         return self.execute_command('JSON.DEL', name, str_path(path))
 
-    def jsonget(self, name, *args, no_escape=False):
+    def jsonget(self, name, no_escape=False, *args):
         """
         Get the object stored as a JSON value at key ``name``
         ``args`` is zero or more paths, and defaults to root path
