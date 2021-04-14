@@ -121,12 +121,7 @@ class Client(StrictRedis):
             for p in args:
                 pieces.append(str_path(p))
 
-        # Handle case where key doesn't exist. The JSONDecoder would raise a
-        # TypeError exception since it can't decode None
-        try:
-            return self.execute_command('JSON.GET', *pieces)
-        except TypeError:
-            return None
+        return self.execute_command('JSON.GET', *pieces)
 
     def jsonmget(self, path, *args):
         """
