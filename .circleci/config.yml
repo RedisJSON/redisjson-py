@@ -86,7 +86,7 @@ jobs:
         default: "latest"
     docker:
       - image: circleci/python:<<parameters.python_version>>
-      - image: redislabs/rebloom:edge
+      - image: redislabs/rejson:edge
     steps:
       - build_and_test
 
