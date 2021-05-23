@@ -1,0 +1,44 @@
+[tool.poetry]
+name = "rejson"
+version = "0.5.4"
+description = "RedisJSON Python Client"
+authors = ["RedisLabs <oss@redislabs.com>"]
+license = "BSD-3-Clause"
+readme = "README.md"
+build = "build.py"
+
+classifiers = [
+    'Topic :: Database',
+    'Programming Language :: Python',
+    'Intended Audience :: Developers',
+    'Programming Language :: Python :: 3.6',
+    'Programming Language :: Python :: 3.7',
+    'Programming Language :: Python :: 3.8',
+    'Programming Language :: Python :: 3.9',
+    'License :: OSI Approved :: BSD License',
+    'Operating System :: OS Independent',
+    'Development Status :: 5 - Production/Stable'
+]
+keywords = ["Redis JSON Extension"]
+
+[tool.poetry.dependencies]
+python = "^3.6"
+redis = "^3.5.3"
+six = "^1.16.0"
+
+
+[tool.poetry.urls]
+url = "https://redisjson.io"
+repository = "https://github.com/RedisJSON/redisjson-py"
+
+[tool.poetry.dev-dependencies]
+codecov = "^2.1.11"
+flake8 = "^3.9.2"
+tox = "^3.23.1"
+tox-poetry = "^0.3.0"
+bandit = "^1.7.0"
+vulture = "^2.3"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

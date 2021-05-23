@@ -4,12 +4,13 @@
 [![PyVersions](https://img.shields.io/pypi/pyversions/rejson.svg)](https://github.com/RedisJSON/redisjson-py)
 [![GitHub issues](https://img.shields.io/github/release/RedisJSON/redisjson-py.svg)](https://github.com/RedisJSON/redisjson-py/releases/latest)
 [![Codecov](https://coveralls.io/repos/github/RedisLabs/rejson-py/badge.svg?branch=master)](https://coveralls.io/github/RedisLabs/rejson-py?branch=master)
+[![Known Vulnerabilities](https://snyk.io/test/github/RedisJSON/redisjson-py/badge.svg?targetFile=pyproject.toml)](https://snyk.io/test/github/RedisJSON/redisjson-py?targetFile=pyproject.toml)
 
 # RedisJSON Python Client
 
 [![Forum](https://img.shields.io/badge/Forum-RedisJSON-blue)](https://forum.redislabs.com/c/modules/redisjson)
 [![Discord](https://img.shields.io/discord/697882427875393627?style=flat-square)](https://discord.gg/QUkjSsk)
-    
+
 rejson-py is a package that allows storing, updating and querying objects as
 JSON documents in a [Redis](https://redis.io) database that is extended with the
 [ReJSON module](https://github.com/redislabsmodules/rejson). The package extends
@@ -22,6 +23,17 @@ JSON.
 ```bash
 $ pip install rejson
 ```
+
+## Development
+
+1. Create a virtualenv to manage your python dependencies, and ensure it's active.
+   ```virtualenv -v venv```
+2. Install [pypoetry](https://python-poetry.org/) to manage your dependencies.
+   ```pip install --user poetry```
+3. Install dependencies.
+   ```poetry install```
+
+[tox](https://tox.readthedocs.io/en/latest/) runs all tests as its default target. Running *tox* by itself will run unit tests. Ensure you have a running redis, with the module loaded.
 
 ## Usage example
 
