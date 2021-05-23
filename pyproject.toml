@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "rejson"
 version = "0.5.4"
-description = "RedisBloom Python Client"
+description = "RedisJSON Python Client"
 authors = ["RedisLabs <oss@redislabs.com>"]
 license = "BSD-3-Clause"
 readme = "README.md"
