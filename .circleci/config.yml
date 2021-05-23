@@ -58,6 +58,11 @@ commands:
             pip install --user --quiet -r .circleci/circle_requirements.txt
 
       - run:
+          name: install dependencies
+          command: |
+            poetry install
+
+      - run:
           name: build sdist and wheels
           command: |
             poetry build
