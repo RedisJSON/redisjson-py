@@ -91,12 +91,7 @@ class Client(StrictRedis):
             self._decoder = decoder
 
     def _decode(self, s, *args, **kwargs):
-        try:
-            return self._decoder.decode(s, *args, **kwargs)
-        except TypeError:
-            if s is not None:
-                raise
-            return None
+        return self._decoder.decode(s, *args, **kwargs) if s is not None else None
 
     def jsondel(self, name, path=Path.rootPath()):
         """
