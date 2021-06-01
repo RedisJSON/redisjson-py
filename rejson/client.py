@@ -1,6 +1,7 @@
 import six
 import json
 from redis import StrictRedis
+import redis.client as rc
 from redis.client import Pipeline
 from redis._compat import (long, nativestr)
 from .path import Path
@@ -24,7 +25,7 @@ def bulk_of_jsons(d):
     return _f
 
 
-class Client(StrictRedis):
+class Client():
     """
     This class subclasses redis-py's `StrictRedis` and implements ReJSON's
     commmands (prefixed with "json").
@@ -37,8 +38,9 @@ class Client(StrictRedis):
     _encode = None
     _decoder = None
     _decode = None
+    _client = None
 
-    def __init__(self, encoder=None, decoder=None, *args, **kwargs):
+    def __init__(self, client=None, encoder=None, decoder=None, *args, **kwargs):
         """
         Creates a new ReJSON client.
 
@@ -47,7 +49,10 @@ class Client(StrictRedis):
         """
         self.setEncoder(encoder)
         self.setDecoder(decoder)
-        StrictRedis.__init__(self, *args, **kwargs)
+        if client is None:
+            self.setClient(StrictRedis(*args, **kwargs))
+        else:
+            self.setClient(client)
 
         # Set the module commands' callbacks
         MODULE_CALLBACKS = {
@@ -68,8 +73,47 @@ class Client(StrictRedis):
                 'JSON.OBJLEN': long,
         }
         for k, v in six.iteritems(MODULE_CALLBACKS):
-            self.set_response_callback(k, v)
-                                    
+            self.client.set_response_callback(k, v)
+
+    #######################################################################
+    # TODO - see if this pass-through stuff can be simplified
+    @property
+    def client(self):
+        return self._client
+
+    def execute_command(self, *args, **kwargs):
+        return self.client.execute_command(*args, **kwargs)
+
+    def exists(self, *args, **kwargs):
+        return self.client.exists(*args, **kwargs)
+
+    def get(self, *args, **kwargs):
+        return self.client.get(*args, **kwargs)
+
+    @property
+    def connection_pool(self):
+        return self.client.connection_pool
+
+    @connection_pool.setter
+    def connection_pool(self, new_value):
+        self.client.connection_pool = new_value
+
+    @property
+    def response_callbacks(self):
+        return self.client.response_callbacks
+
+    @response_callbacks.setter
+    def response_callbacks(self, new_value):
+        self.client.response_callbacks = new_value
+
+    def flushdb(self):
+        self.client.flushdb()
+
+    #######################################################################
+
+    def setClient(self, client):
+        self._client = client
+
     def setEncoder(self, encoder):
         """
         Sets the client's encoder
@@ -258,6 +302,7 @@ class Client(StrictRedis):
         Overridden in order to provide the right client through the pipeline.
         """
         p = Pipeline(
+            client=self.client,
             connection_pool=self.connection_pool,
             response_callbacks=self.response_callbacks,
             transaction=transaction,
@@ -266,5 +311,11 @@ class Client(StrictRedis):
         p.setDecoder(self._decoder)
         return p
 
+
 class Pipeline(Pipeline, Client):
     "Pipeline for ReJSONClient"
+
+    def __init__(self, client=None, *args, **kwargs):
+        Client.__init__(self, client=client)
+        rc.Pipeline.__init__(self, *args, **kwargs)
+

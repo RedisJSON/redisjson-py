@@ -1,3 +1,4 @@
+import os
 import six
 import json
 import unittest
@@ -6,14 +7,28 @@ from rejson import Client, Path
 
 rj = None
 port = 6379
-
+REDIS_CLUSTER_HOST = os.getenv("REDIS_HOST")
+REDIS_CLUSTER_PORT = os.getenv("REDIS_PORT")
 
 class ReJSONTestCase(TestCase):
 
+    def _create_client(self, *args, **kwargs):
+        if REDIS_CLUSTER_HOST is None or \
+           REDIS_CLUSTER_PORT is None:
+            return Client(*args, **kwargs)
+        else:
+            from rediscluster import RedisCluster
+            startup_nodes = [{"host": REDIS_CLUSTER_HOST,
+                              "port": REDIS_CLUSTER_PORT}]
+            conn = RedisCluster(startup_nodes=startup_nodes, decode_responses=True)
+            return Client(client=conn, *args, **kwargs)
+
+
     def setUp(self):
         global rj
-        rj = Client(port=port, decode_responses=True)
+        rj = self._create_client(port=port, decode_responses=True)
         rj.flushdb()
+
 
     def testJSONSetGetDelShouldSucceed(self):
         "Test basic JSONSet/Get/Del"
@@ -197,7 +212,7 @@ class ReJSONTestCase(TestCase):
                     return CustomClass(k=s[1], v=s[2])
                 return d
 
-        rj = Client(encoder=TestEncoder(), decoder=TestDecoder(),
+        rj = self._create_client(encoder=TestEncoder(), decoder=TestDecoder(),
                     port=port, decode_responses=True)
         rj.flushdb()
 
@@ -219,7 +234,7 @@ class ReJSONTestCase(TestCase):
         "Test the usage example"
 
         # Create a new rejson-py client
-        rj = Client(host='localhost', port=port, decode_responses=True)
+        rj = self._create_client(host='localhost', port=port, decode_responses=True)
 
         # Set the key `obj` to some object
         obj = {
