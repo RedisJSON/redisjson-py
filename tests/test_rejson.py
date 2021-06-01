@@ -167,9 +167,10 @@ class ReJSONTestCase(TestCase):
         p = rj.pipeline()
         p.jsonset('foo', Path.rootPath(), 'bar')
         p.jsonget('foo')
+        p.jsonget('bar')
         p.jsondel('foo')
         p.exists('foo')
-        self.assertListEqual([True, 'bar', 1, False], p.execute())
+        self.assertListEqual([True, 'bar', None, 1, False], p.execute())
 
     def testCustomEncoderDecoderShouldSucceed(self):
         "Test a custom encoder and decoder"
