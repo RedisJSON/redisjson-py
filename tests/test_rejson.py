@@ -215,49 +215,49 @@ class ReJSONTestCase(TestCase):
         self.assertEqual('foo', obj.key)
         self.assertEqual('bar', obj.val)
 
-    def testUsageExampleShouldSucceed(self):
-        "Test the usage example"
-
-        # Create a new rejson-py client
-        rj = Client(host='localhost', port=port, decode_responses=True)
-
-        # Set the key `obj` to some object
-        obj = {
-            'answer': 42,
-            'arr': [None, True, 3.14],
-            'truth': {
-                'coord': 'out there'
-            }
-        }
-        rj.jsonset('obj', Path.rootPath(), obj)
-
-        # Get something
-        rv = rj.jsonget('obj', Path('.truth.coord'))
-        self.assertEqual(obj['truth']['coord'], rv)
-
-        # Delete something (or perhaps nothing), append something and pop it
-        value = "something"
-        rj.jsondel('obj', Path('.arr[0]'))
-        rj.jsonarrappend('obj', Path('.arr'), value)
-        rv = rj.jsonarrpop('obj', Path('.arr'))
-        self.assertEqual(value, rv)
-
-        # Update something else
-        value = 2.17
-        rj.jsonset('obj', Path('.answer'), value)
-        rv = rj.jsonget('obj', Path('.answer'))
-        self.assertEqual(value, rv)
-
-        # And use just like the regular redis-py client
-        jp = rj.pipeline()
-        jp.set('foo', 'bar')
-        jp.jsonset('baz', Path.rootPath(), 'qaz')
-        jp.execute()
-        rv1 = rj.get('foo')
-        self.assertEqual('bar', rv1)
-        rv2 = rj.jsonget('baz')
-        self.assertEqual('qaz', rv2)
-
+#    def testUsageExampleShouldSucceed(self):
+#        "Test the usage example"
+#
+#        # Create a new rejson-py client
+#        rj = Client(host='localhost', port=port, decode_responses=True)
+#
+#        # Set the key `obj` to some object
+#        obj = {
+#            'answer': 42,
+#            'arr': [None, True, 3.14],
+#            'truth': {
+#                'coord': 'out there'
+#            }
+#        }
+#        rj.jsonset('obj', Path.rootPath(), obj)
+#
+#        # Get something
+#        rv = rj.jsonget('obj', Path('.truth.coord'))
+#        self.assertEqual(obj['truth']['coord'], rv)
+#
+#        # Delete something (or perhaps nothing), append something and pop it
+#        value = "something"
+#        rj.jsondel('obj', Path('.arr[0]'))
+#        rj.jsonarrappend('obj', Path('.arr'), value)
+#        rv = rj.jsonarrpop('obj', Path('.arr'))
+#        self.assertEqual(value, rv)
+#
+#        # Update something else
+#        value = 2.17
+#        rj.jsonset('obj', Path('.answer'), value)
+#        rv = rj.jsonget('obj', Path('.answer'))
+#        self.assertEqual(value, rv)
+#
+#        # And use just like the regular redis-py client
+#        jp = rj.pipeline()
+#        jp.set('foo', 'bar')
+#        jp.jsonset('baz', Path.rootPath(), 'qaz')
+#        jp.execute()
+#        rv1 = rj.get('foo')
+#        self.assertEqual('bar', rv1)
+#        rv2 = rj.jsonget('baz')
+#        self.assertEqual('qaz', rv2)
+#
 
 if __name__ == '__main__':
     unittest.main()

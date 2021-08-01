@@ -38,6 +38,11 @@ tox = "^3.23.1"
 tox-poetry = "^0.3.0"
 bandit = "^1.7.0"
 vulture = "^2.3"
+Sphinx = "^4.1.2"
+sphinx-rtd-theme = "^0.5.2"
+readthedocs-sphinx-search = "^0.1.0"
+sphinx-autoapi = "^1.8.3"
+toml = "^0.10.2"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
