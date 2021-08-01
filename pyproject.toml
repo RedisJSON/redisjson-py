@@ -28,8 +28,9 @@ six = "^1.16.0"
 
 
 [tool.poetry.urls]
-url = "https://redisjson.io"
-repository = "https://github.com/RedisJSON/redisjson-py"
+"Project URL" = "https://redisjson.io"
+Repository = "https://github.com/RedisJSON/redisjson-py"
+Documentation = "https://rejson.readhtedocs.io"
 
 [tool.poetry.dev-dependencies]
 codecov = "^2.1.11"
