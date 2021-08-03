@@ -36,7 +36,6 @@ class Client(StrictRedis):
     _encoder = None
     _encode = None
     _decoder = None
-    _decode = None
 
     def __init__(self, encoder=None, decoder=None, *args, **kwargs):
         """
@@ -90,7 +89,9 @@ class Client(StrictRedis):
             self._decoder = json.JSONDecoder()
         else:
             self._decoder = decoder
-        self._decode = self._decoder.decode
+
+    def _decode(self, s, *args, **kwargs):
+        return self._decoder.decode(s, *args, **kwargs) if s is not None else None
 
     def jsondel(self, name, path=Path.rootPath()):
         """
@@ -113,14 +114,9 @@ class Client(StrictRedis):
 
         else:
             for p in args:
-                    pieces.append(str_path(p))
+                pieces.append(str_path(p))
 
-        # Handle case where key doesn't exist. The JSONDecoder would raise a
-        # TypeError exception since it can't decode None
-        try:
-            return self.execute_command('JSON.GET', *pieces)
-        except TypeError:
-            return None
+        return self.execute_command('JSON.GET', *pieces)
 
     def jsonmget(self, path, *args):
         """

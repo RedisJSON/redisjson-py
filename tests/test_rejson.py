@@ -167,9 +167,10 @@ class ReJSONTestCase(TestCase):
         p = rj.pipeline()
         p.jsonset('foo', Path.rootPath(), 'bar')
         p.jsonget('foo')
+        p.jsonget('bar')
         p.jsondel('foo')
         p.exists('foo')
-        self.assertListEqual([True, 'bar', 1, False], p.execute())
+        self.assertListEqual([True, 'bar', None, 1, False], p.execute())
 
     def testCustomEncoderDecoderShouldSucceed(self):
         "Test a custom encoder and decoder"
@@ -209,6 +210,21 @@ class ReJSONTestCase(TestCase):
         # Check the custom encoder
         self.assertTrue(rj.jsonset('cus', Path.rootPath(),
                                    CustomClass('foo', 'bar')))
+        # Check the custom decoder
+        obj = rj.jsonget('cus', Path.rootPath())
+        self.assertIsNotNone(obj)
+        self.assertEqual(CustomClass, obj.__class__)
+        self.assertEqual('foo', obj.key)
+        self.assertEqual('bar', obj.val)
+
+        # Test resetting the decoder after the client have been created
+        rj.setDecoder(json.JSONDecoder())
+        obj = rj.jsonget('cus', Path.rootPath())
+        self.assertIsNotNone(obj)
+        self.assertNotEqual(CustomClass, obj.__class__)
+
+        # Test setting the decoder after the client have been created
+        rj.setDecoder(TestDecoder())
         obj = rj.jsonget('cus', Path.rootPath())
         self.assertIsNotNone(obj)
         self.assertEqual(CustomClass, obj.__class__)
