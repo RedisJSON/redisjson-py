@@ -51,6 +51,7 @@ class Client(StrictRedis):
         # Set the module commands' callbacks
         MODULE_CALLBACKS = {
                 'JSON.DEL': long,
+                'JSON.CLEAR': long,
                 'JSON.GET': self._decode,
                 'JSON.MGET': bulk_of_jsons(self._decode),
                 'JSON.SET': lambda r: r and nativestr(r) == 'OK',
@@ -99,6 +100,14 @@ class Client(StrictRedis):
         Deletes the JSON value stored at key ``name`` under ``path``
         """
         return self.execute_command('JSON.DEL', name, str_path(path))
+
+    def jsonclear(self, name, path=Path.rootPath()):
+        """
+        Emptying arrays and objects (to have zero slots/keys without
+        deleting the array/object) returning the count of cleared paths
+        (ignoring non-array and non-objects paths)
+        """
+        return self.execute_command('JSON.CLEAR', name, str_path(path))
 
     def jsonget(self, name, *args, no_escape=False):
         """
