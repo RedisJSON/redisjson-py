@@ -56,6 +56,7 @@ class Client(StrictRedis):
                 'JSON.SET': lambda r: r and nativestr(r) == 'OK',
                 'JSON.NUMINCRBY': self._decode,
                 'JSON.NUMMULTBY': self._decode,
+                'JSON.TOGGLE': bool,
                 'JSON.STRAPPEND': long,
                 'JSON.STRLEN': long,
                 'JSON.ARRAPPEND': long,
@@ -165,6 +166,13 @@ class Client(StrictRedis):
         ``path`` at key ``name`` with the provided ``number``
         """
         return self.execute_command('JSON.NUMMULTBY', name, str_path(path), self._encode(number))
+
+    def jsontoggle(self, name, path=Path.rootPath()):
+        """
+        Toggle boolean value under ``path`` at key ``name``,
+        Returning the new value.
+        """
+        return self.execute_command('JSON.TOGGLE', name, str_path(path))
 
     def jsonstrappend(self, name, string, path=Path.rootPath()):
         """
