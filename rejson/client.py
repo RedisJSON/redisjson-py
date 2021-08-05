@@ -67,6 +67,7 @@ class Client(StrictRedis):
                 'JSON.ARRPOP': self._decode,
                 'JSON.ARRTRIM': long,
                 'JSON.OBJLEN': long,
+                'JSON.DEBUG': long,
         }
         for k, v in six.iteritems(MODULE_CALLBACKS):
             self.set_response_callback(k, v)
@@ -259,6 +260,12 @@ class Client(StrictRedis):
         ``name``
         """
         return self.execute_command('JSON.OBJLEN', name, str_path(path))
+
+    def jsondebugmemory(self, name, path=Path.rootPath()):
+        """
+        Returns the memory usage in bytes of a value under ``path`` from key ``name``.
+        """
+        return self.execute_command("JSON.DEBUG", "MEMORY", name, str_path(path))
 
     def pipeline(self, transaction=True, shard_hint=None):
         """

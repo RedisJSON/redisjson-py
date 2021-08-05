@@ -174,6 +174,12 @@ class ReJSONTestCase(TestCase):
         rj.jsonset('obj', Path.rootPath(), obj)
         self.assertEqual(len(obj), rj.jsonobjlen('obj', Path.rootPath()))
 
+    def testDebugMemoryShouldSucceed(self):
+        "Test JSONDebug"
+
+        rj.jsonset('str', Path.rootPath(), 'foo')
+        self.assertEqual(24, rj.jsondebugmemory('str', Path.rootPath()))
+
     def testPipelineShouldSucceed(self):
         "Test pipeline"
 
