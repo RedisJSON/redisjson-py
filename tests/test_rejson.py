@@ -82,6 +82,10 @@ class ReJSONTestCase(TestCase):
         self.assertEqual(5, rj.jsonnummultby('num', Path.rootPath(), 2.5))
         self.assertEqual(2.5, rj.jsonnummultby('num', Path.rootPath(), 0.5))
 
+    def testToggle(self):
+        rj.jsonset('bool', Path.rootPath(), False)
+        self.assertTrue(rj.jsontoggle('bool', Path.rootPath()))
+
     def testStrAppendShouldSucceed(self):
         "Test JSONStrAppend"
 
