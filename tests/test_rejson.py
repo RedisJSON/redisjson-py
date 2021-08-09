@@ -93,7 +93,8 @@ class ReJSONTestCase(TestCase):
         "Test JSONToggle"
 
         rj.jsonset('bool', Path.rootPath(), False)
-        self.assertTrue(rj.jsontoggle('bool', Path.rootPath()))
+        self.assertTrue(rj.jsontoggle('bool', Path.rootPath()))        
+        self.assertFalse(rj.jsontoggle('bool', Path.rootPath()))
 
     def testStrAppendShouldSucceed(self):
         "Test JSONStrAppend"
