@@ -1,3 +1,4 @@
+import redis
 import six
 import json
 import unittest
@@ -36,7 +37,7 @@ class ReJSONTestCase(TestCase):
     def testJSONSetExistentialModifiersShouldSucceed(self):
         "Test JSONSet's NX/XX flags"
 
-        obj = { 'foo': 'bar' }
+        obj = {'foo': 'bar'}
         self.assertTrue(rj.jsonset('obj', Path.rootPath(), obj))
 
         # Test that flags prevent updates when conditions are unmet
@@ -60,6 +61,13 @@ class ReJSONTestCase(TestCase):
         e = [1, 2]
         self.assertListEqual(e, r)
 
+    def testClearShouldSucceed(self):
+        "Test JSONClear"
+
+        rj.jsonset('arr', Path.rootPath(), [0, 1, 2, 3, 4])
+        self.assertEqual(1, rj.jsonclear('arr', Path.rootPath()))
+        self.assertEqual([], rj.jsonget('arr'))
+
     def testTypeShouldSucceed(self):
         "Test JSONType"
 
@@ -81,6 +89,17 @@ class ReJSONTestCase(TestCase):
         self.assertEqual(2, rj.jsonnummultby('num', Path.rootPath(), 2))
         self.assertEqual(5, rj.jsonnummultby('num', Path.rootPath(), 2.5))
         self.assertEqual(2.5, rj.jsonnummultby('num', Path.rootPath(), 0.5))
+
+    def testToggleShouldSucceed(self):
+        "Test JSONToggle"
+
+        rj.jsonset('bool', Path.rootPath(), False)
+        self.assertTrue(rj.jsontoggle('bool', Path.rootPath()))
+        self.assertFalse(rj.jsontoggle('bool', Path.rootPath()))
+        # check non-boolean value
+        rj.jsonset('num', Path.rootPath(), 1)
+        with self.assertRaises(redis.exceptions.ResponseError):
+            rj.jsontoggle('num', Path.rootPath())
 
     def testStrAppendShouldSucceed(self):
         "Test JSONStrAppend"
@@ -160,6 +179,12 @@ class ReJSONTestCase(TestCase):
         obj = {'foo': 'bar', 'baz': 'qaz'}
         rj.jsonset('obj', Path.rootPath(), obj)
         self.assertEqual(len(obj), rj.jsonobjlen('obj', Path.rootPath()))
+
+    def testDebugMemoryShouldSucceed(self):
+        "Test JSONDebug"
+
+        rj.jsonset('str', Path.rootPath(), 'foo')
+        self.assertEqual(24, rj.jsondebugmemory('str', Path.rootPath()))
 
     def testPipelineShouldSucceed(self):
         "Test pipeline"

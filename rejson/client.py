@@ -51,11 +51,13 @@ class Client(StrictRedis):
         # Set the module commands' callbacks
         MODULE_CALLBACKS = {
                 'JSON.DEL': long,
+                'JSON.CLEAR': long,
                 'JSON.GET': self._decode,
                 'JSON.MGET': bulk_of_jsons(self._decode),
                 'JSON.SET': lambda r: r and nativestr(r) == 'OK',
                 'JSON.NUMINCRBY': self._decode,
                 'JSON.NUMMULTBY': self._decode,
+                'JSON.TOGGLE': lambda b: b == 'true',
                 'JSON.STRAPPEND': long,
                 'JSON.STRLEN': long,
                 'JSON.ARRAPPEND': long,
@@ -65,10 +67,11 @@ class Client(StrictRedis):
                 'JSON.ARRPOP': self._decode,
                 'JSON.ARRTRIM': long,
                 'JSON.OBJLEN': long,
+                'JSON.DEBUG': long,
         }
         for k, v in six.iteritems(MODULE_CALLBACKS):
             self.set_response_callback(k, v)
-                                    
+
     def setEncoder(self, encoder):
         """
         Sets the client's encoder
@@ -98,6 +101,14 @@ class Client(StrictRedis):
         Deletes the JSON value stored at key ``name`` under ``path``
         """
         return self.execute_command('JSON.DEL', name, str_path(path))
+
+    def jsonclear(self, name, path=Path.rootPath()):
+        """
+        Emptying arrays and objects (to have zero slots/keys without
+        deleting the array/object) returning the count of cleared paths
+        (ignoring non-array and non-objects paths)
+        """
+        return self.execute_command('JSON.CLEAR', name, str_path(path))
 
     def jsonget(self, name, *args, no_escape=False):
         """
@@ -165,6 +176,13 @@ class Client(StrictRedis):
         ``path`` at key ``name`` with the provided ``number``
         """
         return self.execute_command('JSON.NUMMULTBY', name, str_path(path), self._encode(number))
+
+    def jsontoggle(self, name, path=Path.rootPath()):
+        """
+        Toggle boolean value under ``path`` at key ``name``,
+        Returning the new value.
+        """
+        return self.execute_command('JSON.TOGGLE', name, str_path(path))
 
     def jsonstrappend(self, name, string, path=Path.rootPath()):
         """
@@ -242,6 +260,12 @@ class Client(StrictRedis):
         ``name``
         """
         return self.execute_command('JSON.OBJLEN', name, str_path(path))
+
+    def jsondebugmemory(self, name, path=Path.rootPath()):
+        """
+        Returns the memory usage in bytes of a value under ``path`` from key ``name``.
+        """
+        return self.execute_command("JSON.DEBUG", "MEMORY", name, str_path(path))
 
     def pipeline(self, transaction=True, shard_hint=None):
         """
