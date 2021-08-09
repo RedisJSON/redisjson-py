@@ -1,4 +1,3 @@
-import pytest
 import redis
 import six
 import json
@@ -99,7 +98,7 @@ class ReJSONTestCase(TestCase):
         self.assertFalse(rj.jsontoggle('bool', Path.rootPath()))
         # check non-boolean value
         rj.jsonset('num', Path.rootPath(), 1)
-        with pytest.raises(redis.exceptions.ResponseError):
+        with self.assertRaises(redis.exceptions.ResponseError):
             rj.jsontoggle('num', Path.rootPath())
 
     def testStrAppendShouldSucceed(self):
