@@ -57,7 +57,7 @@ class Client(StrictRedis):
                 'JSON.SET': lambda r: r and nativestr(r) == 'OK',
                 'JSON.NUMINCRBY': self._decode,
                 'JSON.NUMMULTBY': self._decode,
-                'JSON.TOGGLE': bool,
+                'JSON.TOGGLE': lambda b: b == 'true',
                 'JSON.STRAPPEND': long,
                 'JSON.STRLEN': long,
                 'JSON.ARRAPPEND': long,
@@ -71,7 +71,7 @@ class Client(StrictRedis):
         }
         for k, v in six.iteritems(MODULE_CALLBACKS):
             self.set_response_callback(k, v)
-                                    
+
     def setEncoder(self, encoder):
         """
         Sets the client's encoder

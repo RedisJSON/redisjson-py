@@ -1,3 +1,5 @@
+import pytest
+import redis
 import six
 import json
 import unittest
@@ -36,7 +38,7 @@ class ReJSONTestCase(TestCase):
     def testJSONSetExistentialModifiersShouldSucceed(self):
         "Test JSONSet's NX/XX flags"
 
-        obj = { 'foo': 'bar' }
+        obj = {'foo': 'bar'}
         self.assertTrue(rj.jsonset('obj', Path.rootPath(), obj))
 
         # Test that flags prevent updates when conditions are unmet
@@ -93,8 +95,12 @@ class ReJSONTestCase(TestCase):
         "Test JSONToggle"
 
         rj.jsonset('bool', Path.rootPath(), False)
-        self.assertTrue(rj.jsontoggle('bool', Path.rootPath()))        
+        self.assertTrue(rj.jsontoggle('bool', Path.rootPath()))
         self.assertFalse(rj.jsontoggle('bool', Path.rootPath()))
+        # check non-boolean value
+        rj.jsonset('num', Path.rootPath(), 1)
+        with pytest.raises(redis.exceptions.ResponseError):
+            rj.jsontoggle('num', Path.rootPath())
 
     def testStrAppendShouldSucceed(self):
         "Test JSONStrAppend"
