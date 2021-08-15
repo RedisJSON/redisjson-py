@@ -36,7 +36,6 @@ class Client(StrictRedis):
     _encoder = None
     _encode = None
     _decoder = None
-    _decode = None
 
     def __init__(self, encoder=None, decoder=None, *args, **kwargs):
         """
@@ -52,11 +51,13 @@ class Client(StrictRedis):
         # Set the module commands' callbacks
         MODULE_CALLBACKS = {
                 'JSON.DEL': long,
+                'JSON.CLEAR': long,
                 'JSON.GET': self._decode,
                 'JSON.MGET': bulk_of_jsons(self._decode),
                 'JSON.SET': lambda r: r and nativestr(r) == 'OK',
                 'JSON.NUMINCRBY': self._decode,
                 'JSON.NUMMULTBY': self._decode,
+                'JSON.TOGGLE': lambda b: b == 'true',
                 'JSON.STRAPPEND': long,
                 'JSON.STRLEN': long,
                 'JSON.ARRAPPEND': long,
@@ -66,10 +67,11 @@ class Client(StrictRedis):
                 'JSON.ARRPOP': self._decode,
                 'JSON.ARRTRIM': long,
                 'JSON.OBJLEN': long,
+                'JSON.DEBUG': long,
         }
         for k, v in six.iteritems(MODULE_CALLBACKS):
             self.set_response_callback(k, v)
-                                    
+
     def setEncoder(self, encoder):
         """
         Sets the client's encoder
@@ -90,13 +92,23 @@ class Client(StrictRedis):
             self._decoder = json.JSONDecoder()
         else:
             self._decoder = decoder
-        self._decode = self._decoder.decode
+
+    def _decode(self, s, *args, **kwargs):
+        return self._decoder.decode(s, *args, **kwargs) if s is not None else None
 
     def jsondel(self, name, path=Path.rootPath()):
         """
         Deletes the JSON value stored at key ``name`` under ``path``
         """
         return self.execute_command('JSON.DEL', name, str_path(path))
+
+    def jsonclear(self, name, path=Path.rootPath()):
+        """
+        Emptying arrays and objects (to have zero slots/keys without
+        deleting the array/object) returning the count of cleared paths
+        (ignoring non-array and non-objects paths)
+        """
+        return self.execute_command('JSON.CLEAR', name, str_path(path))
 
     def jsonget(self, name, *args, no_escape=False):
         """
@@ -113,14 +125,9 @@ class Client(StrictRedis):
 
         else:
             for p in args:
-                    pieces.append(str_path(p))
+                pieces.append(str_path(p))
 
-        # Handle case where key doesn't exist. The JSONDecoder would raise a
-        # TypeError exception since it can't decode None
-        try:
-            return self.execute_command('JSON.GET', *pieces)
-        except TypeError:
-            return None
+        return self.execute_command('JSON.GET', *pieces)
 
     def jsonmget(self, path, *args):
         """
@@ -169,6 +176,13 @@ class Client(StrictRedis):
         ``path`` at key ``name`` with the provided ``number``
         """
         return self.execute_command('JSON.NUMMULTBY', name, str_path(path), self._encode(number))
+
+    def jsontoggle(self, name, path=Path.rootPath()):
+        """
+        Toggle boolean value under ``path`` at key ``name``,
+        Returning the new value.
+        """
+        return self.execute_command('JSON.TOGGLE', name, str_path(path))
 
     def jsonstrappend(self, name, string, path=Path.rootPath()):
         """
@@ -246,6 +260,12 @@ class Client(StrictRedis):
         ``name``
         """
         return self.execute_command('JSON.OBJLEN', name, str_path(path))
+
+    def jsondebugmemory(self, name, path=Path.rootPath()):
+        """
+        Returns the memory usage in bytes of a value under ``path`` from key ``name``.
+        """
+        return self.execute_command("JSON.DEBUG", "MEMORY", name, str_path(path))
 
     def pipeline(self, transaction=True, shard_hint=None):
         """
