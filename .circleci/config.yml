@@ -81,6 +81,7 @@ commands:
           paths:
             - ./.tox
             - ~/.cache/pip
+            - ~/.cache/pypoetry
           key: v1-dependencies-{{ checksum "pyproject.toml" }}
 
 jobs:
