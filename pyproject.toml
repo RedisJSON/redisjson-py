@@ -2,7 +2,7 @@
 name = "rejson"
 version = "0.5.4"
 description = "RedisJSON Python Client"
-authors = ["RedisLabs <oss@redislabs.com>"]
+authors = ["Redis <oss@.com>"]
 license = "BSD-3-Clause"
 readme = "README.md"
 build = "build.py"
