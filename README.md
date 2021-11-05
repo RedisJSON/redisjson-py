@@ -122,7 +122,7 @@ a JSON string for example:
                return str(obj)
            return json.JSONEncoder.encode(self, obj)
 
-   class TestDecoder(JSONDecoder):
+   class CustomDecoder(JSONDecoder):
        "A custom decoder for the custom class"
        def decode(self, obj):
            d = json.JSONDecoder.decode(self, obj)
