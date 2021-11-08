@@ -11,6 +11,12 @@
 [![Forum](https://img.shields.io/badge/Forum-RedisJSON-blue)](https://forum.redislabs.com/c/modules/redisjson)
 [![Discord](https://img.shields.io/discord/697882427875393627?style=flat-square)](https://discord.gg/QUkjSsk)
 
+## Deprecation notice
+
+As of [redis-py 4.0.0 beta3](https://pypi.org/project/redis/4.0.0b3) this library is deprecated. It's features have been merged into redis-py. Please either install it [from pypy](https://pypi.org/project/redis) or [the repo](https://github.com/redis/redis-py).
+
+--------------------------------
+
 rejson-py is a package that allows storing, updating and querying objects as
 JSON documents in a [Redis](https://redis.io) database that is extended with the
 [ReJSON module](https://github.com/redislabsmodules/rejson). The package extends
