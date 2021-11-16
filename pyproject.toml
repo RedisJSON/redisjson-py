@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "rejson"
-version = "0.5.4"
+version = "0.5.5"
 description = "RedisJSON Python Client"
 authors = ["RedisLabs <oss@redislabs.com>"]
 license = "BSD-3-Clause"
@@ -24,7 +24,7 @@ keywords = ["Redis JSON Extension"]
 
 [tool.poetry.dependencies]
 python = "^3.6"
-redis = "^3.5.3"
+redis = "3.5.3"
 six = "^1.16.0"
 
 
