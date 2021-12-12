@@ -184,7 +184,7 @@ class ReJSONTestCase(TestCase):
         "Test JSONDebug"
 
         rj.jsonset('str', Path.rootPath(), 'foo')
-        self.assertEqual(24, rj.jsondebugmemory('str', Path.rootPath()))
+        self.assertEqual(8, rj.jsondebugmemory('str', Path.rootPath()))
 
     def testPipelineShouldSucceed(self):
         "Test pipeline"
