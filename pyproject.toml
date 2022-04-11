@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "rejson"
-version = "0.5.6"
+version = "0.5.7"
 description = "RedisJSON Python Client"
 authors = ["RedisLabs <oss@redislabs.com>"]
 license = "BSD-3-Clause"
@@ -17,7 +17,7 @@ classifiers = [
     'Programming Language :: Python :: 3.10',
     'License :: OSI Approved :: BSD License',
     'Operating System :: OS Independent',
-    'Development Status :: 5 - Production/Stable'
+    'Development Status :: 7 - Inactive'
 ]
 keywords = ["Redis JSON Extension"]
 
