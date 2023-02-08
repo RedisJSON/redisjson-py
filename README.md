@@ -1,5 +1,4 @@
 [![license](https://img.shields.io/github/license/RedisJSON/RedisJSON-py.svg)](https://github.com/RedisJSON/redisjson-py/blob/master/LICENSE)
-[![CircleCI](https://circleci.com/gh/RedisJSON/redisjson-py/tree/master.svg?style=svg)](https://circleci.com/gh/RedisJSON/redisjson-py/tree/master)
 [![pypi](https://badge.fury.io/py/rejson.svg)](https://badge.fury.io/py/rejson)
 [![PyVersions](https://img.shields.io/pypi/pyversions/rejson.svg)](https://github.com/RedisJSON/redisjson-py)
 [![GitHub issues](https://img.shields.io/github/release/RedisJSON/redisjson-py.svg)](https://github.com/RedisJSON/redisjson-py/releases/latest)
