@@ -95,7 +95,7 @@ The following shows how to use this for a custom class that's stored as
 a JSON string for example:
 
 ```python
-
+   import sys
    from json import JSONEncoder, JSONDecoder
    from rejson import Client
 
@@ -127,11 +127,13 @@ a JSON string for example:
                return str(obj)
            return json.JSONEncoder.encode(self, obj)
 
-   class TestDecoder(JSONDecoder):
+   class CustomDecoder(JSONDecoder):
        "A custom decoder for the custom class"
        def decode(self, obj):
            d = json.JSONDecoder.decode(self, obj)
-           if isinstance(d, basestring) and d.startswith('CustomClass:'):
+           
+           str_type = basestring if sys.version_info.major == 2 else str
+           if isinstance(d, str_type) and d.startswith('CustomClass:'):
                return CustomClass(d)
            return d
 
