@@ -123,3 +123,7 @@ obj = rj.jsonget('custom', Path.rootPath())
 __version__ = "0.5.4"
 from .client import Client
 from .path import Path
+from warnings import warn
+warn("Please upgrade to redis-py (https://pypi.org/project/redis/) "
+"This library is deprecated, and all features have been merged into redis-py.",
+DeprecationWarning, stacklevel=2)
